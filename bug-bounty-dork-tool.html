@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BugDork — Bug Bounty Search Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --bg2: #0d1117;
+    --bg3: #161b22;
+    --bg4: #1c2128;
+    --border: #21262d;
+    --border2: #30363d;
+    --accent: #00ff88;
+    --accent2: #00d4ff;
+    --accent3: #ff6b35;
+    --accent4: #a78bfa;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --danger: #ff4757;
+    --warn: #ffa502;
+    --glow: 0 0 20px rgba(0,255,136,0.15);
+    --glow2: 0 0 30px rgba(0,212,255,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,12,16,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 64px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--accent);
+    box-shadow: var(--glow);
+    animation: pulse-border 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 10px rgba(0,255,136,0.2); }
+    50% { box-shadow: 0 0 25px rgba(0,255,136,0.5); }
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .header-tag {
+    padding: 3px 10px;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 20px;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .header-stats {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .stat-badge {
+    text-align: center;
+  }
+
+  .stat-badge .num {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-badge .lbl {
+    font-size: 9px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-sep {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding: 60px 24px 40px;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+
+  /* Master Search */
+  .search-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto 16px;
+  }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,255,136,0.1), var(--glow);
+  }
+
+  .search-icon {
+    padding: 0 16px;
+    color: var(--text3);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  #searchInput {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 14px 0;
+    caret-color: var(--accent);
+  }
+
+  #searchInput::placeholder { color: var(--text3); }
+
+  .search-clear {
+    padding: 0 14px;
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 16px;
+    display: none;
+    transition: color 0.2s;
+  }
+
+  .search-clear:hover { color: var(--danger); }
+  .search-clear.visible { display: flex; }
+
+  /* Engine selector */
+  .engine-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .engine-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .engine-btn:hover { border-color: var(--border2); color: var(--text); }
+  .engine-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,255,136,0.06); }
+  .engine-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+  /* Filter chips */
+  .filters-row {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 24px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-right: 4px;
+  }
+
+  .chip {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .chip.active {
+    border-color: var(--accent);
+    background: rgba(0,255,136,0.08);
+    color: var(--accent);
+  }
+
+  .chip-count {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    font-size: 9px;
+    color: var(--text3);
+  }
+
+  /* Main layout */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+  }
+
+  .side-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .side-card-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .side-card-header .icon { color: var(--accent); }
+
+  .cat-list { padding: 8px; }
+
+  .cat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .cat-item:hover { background: var(--bg3); color: var(--text); }
+
+  .cat-item.active {
+    background: rgba(0,255,136,0.08);
+    color: var(--accent);
+  }
+
+  .cat-item .cat-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .cat-item .cat-count {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--bg4);
+    color: var(--text3);
+  }
+
+  .cat-item.active .cat-count {
+    background: rgba(0,255,136,0.15);
+    color: var(--accent);
+  }
+
+  /* Custom dork builder */
+  .builder-body { padding: 14px; }
+
+  .builder-field {
+    margin-bottom: 10px;
+  }
+
+  .builder-field label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+
+  .builder-field select,
+  .builder-field input[type="text"] {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .builder-field select:focus,
+  .builder-field input:focus {
+    border-color: var(--accent);
+  }
+
+  .builder-output {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 11px;
+    color: var(--accent);
+    word-break: break-all;
+    min-height: 50px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .builder-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-sm {
+    flex: 1;
+    padding: 7px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,255,136,0.06); }
+
+  .btn-sm.primary { border-color: var(--accent); color: var(--accent); background: rgba(0,255,136,0.08); }
+  .btn-sm.primary:hover { background: rgba(0,255,136,0.15); }
+
+  /* Dork cards area */
+  .results-area {}
+
+  /* Toolbar */
+  .results-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .results-count {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .results-count strong { color: var(--accent); }
+
+  .toolbar-right {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .sort-select {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .export-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Category section */
+  .cat-section {
+    margin-bottom: 32px;
+  }
+
+  .cat-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cat-section-title .cat-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  .cat-section-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* Dork grid */
+  .dork-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 10px;
+  }
+
+  /* Dork card */
+  .dork-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+    group: true;
+  }
+
+  .dork-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--card-color, var(--accent));
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .dork-card:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .dork-card:hover::before { opacity: 1; }
+
+  .dork-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.5;
+    word-break: break-all;
+    margin-bottom: 10px;
+    padding-right: 4px;
+  }
+
+  .dork-keyword {
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  .dork-value {
+    color: var(--accent);
+  }
+
+  .dork-string {
+    color: var(--warn);
+  }
+
+  .dork-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dork-tag {
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+  }
+
+  .dork-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .dork-card:hover .dork-actions { opacity: 1; }
+
+  .dork-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    border: 1px solid var(--border2);
+    background: var(--bg4);
+    color: var(--text3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .dork-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .dork-action-btn.google:hover { border-color: #4285f4; color: #4285f4; }
+  .dork-action-btn.bing:hover { border-color: #00897b; color: #00897b; }
+  .dork-action-btn.ddg:hover { border-color: #de5833; color: #de5833; }
+  .dork-action-btn.copied { border-color: var(--accent) !important; color: var(--accent) !important; }
+
+  /* No results */
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+    grid-column: 1/-1;
+  }
+
+  .no-results .icon { font-size: 40px; margin-bottom: 12px; display: block; }
+  .no-results h3 { font-size: 18px; color: var(--text2); margin-bottom: 8px; }
+  .no-results p { font-size: 13px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    background: var(--bg3);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 12px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--glow);
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Highlight */
+  mark {
+    background: rgba(0,255,136,0.2);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 8px;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .cat-section { animation: fadeInUp 0.4s ease forwards; }
+
+  /* Category colors */
+  .color-url { --card-color: #00ff88; color: #00ff88; border-color: rgba(0,255,136,0.4); }
+  .color-disclosure { --card-color: #00d4ff; color: #00d4ff; border-color: rgba(0,212,255,0.4); }
+  .color-platform { --card-color: #a78bfa; color: #a78bfa; border-color: rgba(167,139,250,0.4); }
+  .color-region { --card-color: #fbbf24; color: #fbbf24; border-color: rgba(251,191,36,0.4); }
+  .color-edu { --card-color: #34d399; color: #34d399; border-color: rgba(52,211,153,0.4); }
+  .color-hof { --card-color: #f97316; color: #f97316; border-color: rgba(249,115,22,0.4); }
+  .color-github { --card-color: #e2e8f0; color: #e2e8f0; border-color: rgba(226,232,240,0.4); }
+  .color-filetype { --card-color: #fb923c; color: #fb923c; border-color: rgba(251,146,60,0.4); }
+  .color-intext { --card-color: #c084fc; color: #c084fc; border-color: rgba(192,132,252,0.4); }
+  .color-scope { --card-color: #38bdf8; color: #38bdf8; border-color: rgba(56,189,248,0.4); }
+  .color-crypto { --card-color: #facc15; color: #facc15; border-color: rgba(250,204,21,0.4); }
+  .color-startup { --card-color: #4ade80; color: #4ade80; border-color: rgba(74,222,128,0.4); }
+  .color-boolean { --card-color: #f472b6; color: #f472b6; border-color: rgba(244,114,182,0.4); }
+
+  .badge-url { background: rgba(0,255,136,0.1); color: #00ff88; }
+  .badge-disclosure { background: rgba(0,212,255,0.1); color: #00d4ff; }
+  .badge-platform { background: rgba(167,139,250,0.1); color: #a78bfa; }
+  .badge-region { background: rgba(251,191,36,0.1); color: #fbbf24; }
+  .badge-edu { background: rgba(52,211,153,0.1); color: #34d399; }
+  .badge-hof { background: rgba(249,115,22,0.1); color: #f97316; }
+  .badge-github { background: rgba(226,232,240,0.1); color: #e2e8f0; }
+  .badge-filetype { background: rgba(251,146,60,0.1); color: #fb923c; }
+  .badge-intext { background: rgba(192,132,252,0.1); color: #c084fc; }
+  .badge-scope { background: rgba(56,189,248,0.1); color: #38bdf8; }
+  .badge-crypto { background: rgba(250,204,21,0.1); color: #facc15; }
+  .badge-startup { background: rgba(74,222,128,0.1); color: #4ade80; }
+  .badge-boolean { background: rgba(244,114,182,0.1); color: #f472b6; }
+
+  /* Select all checkbox */
+  .select-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .select-row input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
+
+  #selectedCount { color: var(--accent); font-weight: 600; }
+
+  .batch-open-btn {
+    margin-left: auto;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    background: rgba(0,255,136,0.08);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: none;
+  }
+
+  .batch-open-btn:hover { background: rgba(0,255,136,0.15); }
+  .batch-open-btn.visible { display: block; }
+
+  /* Card checkbox */
+  .dork-card-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    accent-color: var(--accent);
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .dork-card:hover .dork-card-check,
+  .dork-card-check:checked { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">⬡</div>
+      <span class="logo-text">Bug<span>Dork</span></span>
+    </a>
+    <div class="header-tag">v2.0</div>
+    <div class="header-stats">
+      <div class="stat-badge">
+        <span class="num" id="totalDorks">0</span>
+        <span class="lbl">Dorks</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-badge">
+        <span class="num" id="totalCats">13</span>
+        <span class="lbl">Categories</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-badge">
+        <span class="num" id="filteredCount">0</span>
+        <span class="lbl">Shown</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Bug Bounty Intelligence</div>
+  <h1>Search. Discover.<br>Report. Earn.</h1>
+  <p>The most comprehensive collection of Google dorks for finding bug bounty programs, responsible disclosure pages, and vulnerability disclosure policies across the web.</p>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <div class="search-icon">⌕</div>
+      <input type="text" id="searchInput" placeholder="Search dorks, operators, keywords..." autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="clearSearch" title="Clear">✕</button>
+    </div>
+  </div>
+
+  <div class="engine-row">
+    <span style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;align-self:center;">Open in:</span>
+    <button class="engine-btn active" data-engine="google" onclick="setEngine(this)"><span class="dot"></span>Google</button>
+    <button class="engine-btn" data-engine="bing" onclick="setEngine(this)"><span class="dot"></span>Bing</button>
+    <button class="engine-btn" data-engine="ddg" onclick="setEngine(this)"><span class="dot"></span>DuckDuckGo</button>
+    <button class="engine-btn" data-engine="brave" onclick="setEngine(this)"><span class="dot"></span>Brave</button>
+    <button class="engine-btn" data-engine="shodan" onclick="setEngine(this)"><span class="dot"></span>Shodan</button>
+  </div>
+</div>
+
+<div class="filters-row" id="filtersRow">
+  <span class="filter-label">Filter:</span>
+  <button class="chip active" data-cat="all" onclick="filterByChip(this)">All <span class="chip-count" id="chipAll">0</span></button>
+  <button class="chip" data-cat="url" onclick="filterByChip(this)">🔗 URL-Based <span class="chip-count" id="chipUrl">0</span></button>
+  <button class="chip" data-cat="disclosure" onclick="filterByChip(this)">📋 Disclosure <span class="chip-count" id="chipDisclosure">0</span></button>
+  <button class="chip" data-cat="platform" onclick="filterByChip(this)">🏛 Platform <span class="chip-count" id="chipPlatform">0</span></button>
+  <button class="chip" data-cat="region" onclick="filterByChip(this)">🌍 Region <span class="chip-count" id="chipRegion">0</span></button>
+  <button class="chip" data-cat="edu" onclick="filterByChip(this)">🎓 Edu/Gov <span class="chip-count" id="chipEdu">0</span></button>
+  <button class="chip" data-cat="hof" onclick="filterByChip(this)">🏆 Hall of Fame <span class="chip-count" id="chipHof">0</span></button>
+  <button class="chip" data-cat="github" onclick="filterByChip(this)">🐙 GitHub <span class="chip-count" id="chipGithub">0</span></button>
+  <button class="chip" data-cat="filetype" onclick="filterByChip(this)">📄 Filetype <span class="chip-count" id="chipFiletype">0</span></button>
+  <button class="chip" data-cat="intext" onclick="filterByChip(this)">🔍 Intext <span class="chip-count" id="chipIntext">0</span></button>
+  <button class="chip" data-cat="scope" onclick="filterByChip(this)">🎯 Scope <span class="chip-count" id="chipScope">0</span></button>
+  <button class="chip" data-cat="crypto" onclick="filterByChip(this)">₿ Crypto <span class="chip-count" id="chipCrypto">0</span></button>
+  <button class="chip" data-cat="startup" onclick="filterByChip(this)">🚀 Startup <span class="chip-count" id="chipStartup">0</span></button>
+  <button class="chip" data-cat="boolean" onclick="filterByChip(this)">⚡ Boolean <span class="chip-count" id="chipBoolean">0</span></button>
+</div>
+
+<main>
+  <aside class="sidebar">
+    <div class="side-card">
+      <div class="side-card-header"><span class="icon">◈</span> Categories</div>
+      <div class="cat-list" id="sidebarCats"></div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><span class="icon">⊕</span> Dork Builder</div>
+      <div class="builder-body">
+        <div class="builder-field">
+          <label>Operator</label>
+          <select id="buildOp">
+            <option>inurl:</option>
+            <option>intext:</option>
+            <option>intitle:</option>
+            <option>site:</option>
+            <option>filetype:</option>
+            <option>ext:</option>
+            <option>cache:</option>
+            <option>related:</option>
+            <option>allinurl:</option>
+            <option>allintext:</option>
+          </select>
+        </div>
+        <div class="builder-field">
+          <label>Value</label>
+          <input type="text" id="buildVal" placeholder='e.g. security.txt "bounty"'>
+        </div>
+        <div class="builder-field">
+          <label>Modifier (optional)</label>
+          <input type="text" id="buildMod" placeholder='e.g. -site:hackerone.com'>
+        </div>
+        <div class="builder-output" id="builderOutput">// Your dork will appear here</div>
+        <div class="builder-btns">
+          <button class="btn-sm" onclick="copyBuilderDork()">Copy</button>
+          <button class="btn-sm primary" onclick="openBuilderDork()">Search ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><span class="icon">↓</span> Quick Export</div>
+      <div class="builder-body">
+        <div class="builder-btns" style="flex-direction:column;gap:6px;">
+          <button class="btn-sm" onclick="exportAll('txt')">Export All → .TXT</button>
+          <button class="btn-sm" onclick="exportAll('json')">Export All → .JSON</button>
+          <button class="btn-sm" onclick="exportFiltered('txt')">Export Filtered → .TXT</button>
+          <button class="btn-sm primary" onclick="exportFiltered('json')">Export Filtered → .JSON</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="results-area">
+    <div class="results-toolbar">
+      <span class="results-count">Showing <strong id="shownCount">0</strong> dorks</span>
+      <div class="toolbar-right">
+        <select class="sort-select" id="sortSelect" onchange="renderDorks()">
+          <option value="default">Default order</option>
+          <option value="alpha">A → Z</option>
+          <option value="length">Shortest first</option>
+          <option value="length-desc">Longest first</option>
+        </select>
+        <button class="export-btn" onclick="exportFiltered('txt')">↓ TXT</button>
+        <button class="export-btn" onclick="exportFiltered('json')">↓ JSON</button>
+      </div>
+    </div>
+
+    <div class="select-row">
+      <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+      <label for="selectAll" style="cursor:pointer;">Select all visible</label>
+      <span id="selectedCount" style="display:none">0 selected</span>
+      <button class="batch-open-btn" id="batchOpenBtn" onclick="openSelected()">Open Selected ↗</button>
+    </div>
+
+    <div id="dorksContainer"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com" target="_blank">GitHub</a>
+    <a href="https://hackerone.com" target="_blank">HackerOne</a>
+    <a href="https://bugcrowd.com" target="_blank">Bugcrowd</a>
+    <a href="https://intigriti.com" target="_blank">Intigriti</a>
+    <a href="https://yeswehack.com" target="_blank">YesWeHack</a>
+    <a href="https://chaos.projectdiscovery.io" target="_blank">ProjectDiscovery</a>
+  </div>
+  <p>BugDork — Open Source Bug Bounty Intelligence Tool · For educational and authorized security research purposes only</p>
+</footer>
+
+<div class="toast" id="toast">
+  <span>✓</span>
+  <span id="toastMsg">Copied to clipboard</span>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const DORK_DATA = [
+  // URL-BASED
+  { cat: 'url', dork: 'inurl:/bug bounty' },
+  { cat: 'url', dork: 'inurl:/security' },
+  { cat: 'url', dork: 'inurl:security.txt' },
+  { cat: 'url', dork: 'inurl:security "reward"' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure/ reward' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure/ swag' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure/ bounty' },
+  { cat: 'url', dork: "inurl:'/responsible disclosure' hoodie" },
+  { cat: 'url', dork: 'inurl:responsible-disclosure-policy' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure/ university' },
+  { cat: 'url', dork: 'inurl: private bugbountyprogram' },
+  { cat: 'url', dork: 'inurl:/.well-known/security ext:txt' },
+  { cat: 'url', dork: 'inurl:/.well-known/security ext:txt intext:hackerone' },
+  { cat: 'url', dork: 'inurl:/.well-known/security ext:txt -hackerone -bugcrowd -synack -openbugbounty' },
+  { cat: 'url', dork: 'inurl:reporting-security-issues' },
+  { cat: 'url', dork: 'inurl:security-policy.txt ext:txt' },
+  { cat: 'url', dork: 'inurl:/security.txt "mailto*" -github.com -wikipedia.org -portswigger.net -magento' },
+  { cat: 'url', dork: '/trust/report-a-vulnerability' },
+  { cat: 'url', dork: 'inurl:"bug bounty" and intext:"€" and inurl:/security' },
+  { cat: 'url', dork: 'inurl:"bug bounty" and intext:"$" and inurl:/security' },
+  { cat: 'url', dork: 'inurl:"bug bounty" and intext:"INR" and inurl:/security' },
+  { cat: 'url', dork: 'inurl: "responsible disclosure", "bug bounty", "bugbounty"' },
+  { cat: 'url', dork: 'inurl:/security/index.html intext:bounty' },
+  { cat: 'url', dork: 'inurl:/legal/security intext:monetary' },
+  { cat: 'url', dork: 'inurl:/hackerone.yml -site:hackerone.com' },
+  { cat: 'url', dork: 'inurl:/bug-bounty.json | inurl:/vdp.json' },
+  { cat: 'url', dork: 'inurl:/.well-known/security.txt intext:bounty -hackerone -bugcrowd -synack' },
+  { cat: 'url', dork: 'inurl:bug bounty intext:"rupees"' },
+  { cat: 'url', dork: 'inurl:bug bounty intext:"₹"' },
+  { cat: 'url', dork: 'inurl:responsible disclosure intext:"INR"' },
+  { cat: 'url', dork: 'inurl:/vulnerability-disclosure-policy' },
+  { cat: 'url', dork: 'inurl:/security-acknowledgments' },
+  { cat: 'url', dork: 'inurl:/responsible-disclosure-policy reward' },
+  { cat: 'url', dork: 'inurl:/security-report' },
+  { cat: 'url', dork: 'inurl:/report-vulnerability' },
+  { cat: 'url', dork: 'inurl:/report-a-bug' },
+  { cat: 'url', dork: 'inurl:/coordinated-disclosure' },
+
+  // RESPONSIBLE DISCLOSURE
+  { cat: 'disclosure', dork: 'responsible disclosure swag r=h:com' },
+  { cat: 'disclosure', dork: 'responsible disclosure hall of fame' },
+  { cat: 'disclosure', dork: 'inurl:responsible disclosure $50' },
+  { cat: 'disclosure', dork: 'responsible disclosure europe' },
+  { cat: 'disclosure', dork: 'responsible disclosure white hat' },
+  { cat: 'disclosure', dork: 'white hat program' },
+  { cat: 'disclosure', dork: 'insite:"responsible disclosure" -inurl:nl' },
+  { cat: 'disclosure', dork: 'intext responsible disclosure' },
+  { cat: 'disclosure', dork: 'site eu responsible disclosure' },
+  { cat: 'disclosure', dork: 'site .nl responsible disclosure' },
+  { cat: 'disclosure', dork: 'responsible disclosure r=h:nl' },
+  { cat: 'disclosure', dork: 'responsible disclosure r=h:uk' },
+  { cat: 'disclosure', dork: 'responsible disclosure r=h:eu' },
+  { cat: 'disclosure', dork: 'responsible disclosure bounty r=h:nl' },
+  { cat: 'disclosure', dork: 'responsible disclosure bounty r=h:uk' },
+  { cat: 'disclosure', dork: 'responsible disclosure bounty r=h:eu' },
+  { cat: 'disclosure', dork: 'responsible disclosure swag r=h:nl' },
+  { cat: 'disclosure', dork: 'responsible disclosure swag r=h:uk' },
+  { cat: 'disclosure', dork: 'responsible disclosure swag r=h:eu' },
+  { cat: 'disclosure', dork: 'responsible disclosure reward r=h:nl' },
+  { cat: 'disclosure', dork: 'responsible disclosure reward r=h:uk' },
+  { cat: 'disclosure', dork: 'responsible disclosure reward r=h:eu' },
+  { cat: 'disclosure', dork: 'intext:responsible disclosure bounty' },
+  { cat: 'disclosure', dork: '"responsible disclosure" university' },
+  { cat: 'disclosure', dork: '"responsible disclosure" intext:"you may be eligible for monetary compensation"' },
+  { cat: 'disclosure', dork: 'intext: we offer a bounty' },
+  { cat: 'disclosure', dork: 'responsible disclosure inurl:in' },
+  { cat: 'disclosure', dork: '"van de melding met een minimum van een" -site:responsibledisclosure.nl' },
+  { cat: 'disclosure', dork: '"vulnerability reporting policy"' },
+  { cat: 'disclosure', dork: '"If you believe you\'ve found a security vulnerability"' },
+  { cat: 'disclosure', dork: '"responsible disclosure" AND (monetary OR cash OR "gift card" OR crypto OR BTC)' },
+  { cat: 'disclosure', dork: 'site:responsibledisclosure.com' },
+  { cat: 'disclosure', dork: "inurl:'vulnerability-disclosure-policy' reward" },
+  { cat: 'disclosure', dork: '"coordinated vulnerability disclosure"' },
+  { cat: 'disclosure', dork: '"we follow responsible disclosure"' },
+  { cat: 'disclosure', dork: '"security vulnerability report" intext:reward' },
+  { cat: 'disclosure', dork: 'intext:"report security vulnerabilities" intext:reward' },
+  { cat: 'disclosure', dork: '"we appreciate responsible disclosure"' },
+  { cat: 'disclosure', dork: 'intext:"security issues" intext:"get in touch" intext:reward' },
+
+  // PLATFORM-SPECIFIC
+  { cat: 'platform', dork: '"powered by bugcrowd" -site:bugcrowd.com' },
+  { cat: 'platform', dork: '"submit vulnerability report"' },
+  { cat: 'platform', dork: '"submit vulnerability report" | "powered by bugcrowd" | "powered by hackerone"' },
+  { cat: 'platform', dork: '"powered by synack"' },
+  { cat: 'platform', dork: '"powered by yeswehack" OR "powered by federacy" OR "powered by intigriti" -site:yeswehack.com -site:federacy.com -site:intigriti.com' },
+  { cat: 'platform', dork: '"submit vulnerability report" -site:hackerone.com -site:bugcrowd.com -site:synack.com -site:openbugbounty.org' },
+  { cat: 'platform', dork: 'intext:"Powered by Bug Bounty HQ" OR "Powered by disclose.io"' },
+  { cat: 'platform', dork: 'intext:"managed by huntr.dev"' },
+  { cat: 'platform', dork: 'intext:"CVSS score" AND "eligible for a reward" -hackerone -bugcrowd' },
+  { cat: 'platform', dork: '"powered by intigriti" -site:intigriti.com' },
+  { cat: 'platform', dork: '"powered by hackerone" -site:hackerone.com' },
+  { cat: 'platform', dork: 'inurl:intigriti.com/programs' },
+  { cat: 'platform', dork: 'site:hackerone.com/reports "disclosed"' },
+  { cat: 'platform', dork: 'site:bugcrowd.com/programs intext:"reward"' },
+  { cat: 'platform', dork: 'site:openbugbounty.org inurl:/researcher' },
+  { cat: 'platform', dork: 'intext:"managed by cobalt.io"' },
+  { cat: 'platform', dork: 'intext:"powered by safehats"' },
+  { cat: 'platform', dork: 'intext:"on bugbounty.jp"' },
+  { cat: 'platform', dork: 'intext:"listed on chaos.projectdiscovery.io"' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:intigriti' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:yeswehack' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:cobalt' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:"openbugbounty"' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:hackerone' },
+  { cat: 'platform', dork: 'inurl:/.well-known/security.txt intext:bugcrowd' },
+  { cat: 'platform', dork: 'site:yeswehack.com/programs' },
+  { cat: 'platform', dork: 'site:intigriti.com/programs' },
+  { cat: 'platform', dork: '"powered by federacy"' },
+
+  // REGION-SPECIFIC
+  { cat: 'region', dork: 'site:*.gov.* "responsible disclosure"' },
+  { cat: 'region', dork: 'intext:Vulnerability Disclosure site:nl' },
+  { cat: 'region', dork: 'intext:Vulnerability Disclosure site:eu' },
+  { cat: 'region', dork: 'site:*.*.nl intext:security report reward' },
+  { cat: 'region', dork: 'site:*.*.nl intext:responsible disclosure reward' },
+  { cat: 'region', dork: 'site:*.*.de inurl:bug inurl:bounty' },
+  { cat: 'region', dork: 'site:*.*.uk intext:security report reward' },
+  { cat: 'region', dork: 'site:*.*.cn intext:security report reward' },
+  { cat: 'region', dork: 'site:*.br responsible disclosure' },
+  { cat: 'region', dork: 'site:*.at responsible disclosure' },
+  { cat: 'region', dork: 'site:*.be responsible disclosure' },
+  { cat: 'region', dork: 'site:*.au responsible disclosure' },
+  { cat: 'region', dork: 'site:*.ca intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.jp intext:"vulnerability report" intext:swag' },
+  { cat: 'region', dork: 'site:*.it intext:"bug bounty" OR intext:"security reward"' },
+  { cat: 'region', dork: 'site:*.ch filetype:txt inurl:security intext:bounty' },
+  { cat: 'region', dork: 'site:*.se intext:"responsible disclosure" intext:hall_of_fame' },
+  { cat: 'region', dork: 'site:*.pl inurl:/bezpieczenstwo intext:nagroda' },
+  { cat: 'region', dork: 'site:*.fr intext:"bug bounty" OR "prime de sécurité"' },
+  { cat: 'region', dork: 'site:*.dk inurl:/sikkerhed intext:dusør' },
+  { cat: 'region', dork: 'site:*.no inurl:/sikkerhet intext:belønning' },
+  { cat: 'region', dork: 'site:*.es inurl:/seguridad intext:recompensa' },
+  { cat: 'region', dork: 'site:*.in intext:"bug bounty" intext:"reward"' },
+  { cat: 'region', dork: 'site:*.in inurl:/security intext:bounty' },
+  { cat: 'region', dork: 'site:*.sg intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.nz intext:"vulnerability disclosure" intext:bounty' },
+  { cat: 'region', dork: 'site:*.za intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.mx inurl:/seguridad intext:recompensa' },
+  { cat: 'region', dork: 'site:*.ar intext:"divulgacion responsable" intext:recompensa' },
+  { cat: 'region', dork: 'site:*.pt intext:"divulgação responsável" intext:recompensa' },
+  { cat: 'region', dork: 'site:*.ru intext:"ответственное раскрытие" intext:вознаграждение' },
+  { cat: 'region', dork: 'site:*.cn inurl:/security intext:漏洞 intext:奖励' },
+  { cat: 'region', dork: 'site:*.kr intext:버그바운티 intext:보상' },
+  { cat: 'region', dork: 'site:*.tw intext:漏洞回報 intext:獎勵' },
+  { cat: 'region', dork: 'site:*.tr inurl:/guvenlik intext:odul' },
+  { cat: 'region', dork: 'site:*.hu inurl:/biztonsag intext:jutalom' },
+  { cat: 'region', dork: 'site:*.cz inurl:/bezpecnost intext:odměna' },
+  { cat: 'region', dork: 'site:*.ro inurl:/securitate intext:recompensa' },
+  { cat: 'region', dork: 'site:*.fi inurl:/tietoturva intext:palkkio' },
+  { cat: 'region', dork: 'site:*.il intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.ae intext:"bug bounty" intext:reward' },
+  { cat: 'region', dork: 'site:*.sa intext:"bug bounty" intext:reward' },
+  { cat: 'region', dork: 'site:*.id intext:"bug bounty" intext:reward' },
+  { cat: 'region', dork: 'site:*.ph intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.my intext:"vulnerability disclosure" intext:bounty' },
+  { cat: 'region', dork: 'site:*.co.uk intext:"responsible disclosure" intext:reward' },
+  { cat: 'region', dork: 'site:*.com.au intext:"responsible disclosure" intext:bounty' },
+  { cat: 'region', dork: 'site:*.ng intext:"bug bounty" intext:reward' },
+  { cat: 'region', dork: 'site:*.ke intext:"responsible disclosure"' },
+  { cat: 'region', dork: 'site:*.gh intext:"bug bounty"' },
+  { cat: 'region', dork: 'site:*.za intext:"bug bounty" intext:reward' },
+
+  // EDUCATION & GOVERNMENT
+  { cat: 'edu', dork: 'site:*.edu intext:security report vulnerability' },
+  { cat: 'edu', dork: '"responsible disclosure" university' },
+  { cat: 'edu', dork: 'site:*.edu "responsible disclosure" AND (reward OR swag OR bounty)' },
+  { cat: 'edu', dork: 'site:*.edu inurl:/security intext:"report a vulnerability"' },
+  { cat: 'edu', dork: 'site:*.edu intext:"we run a bug bounty program"' },
+  { cat: 'edu', dork: 'site:*.edu intext:"vulnerability disclosure policy" intext:hall_of_fame' },
+  { cat: 'edu', dork: 'site:*.gov* "vulnerability disclosure program" OR "bug bounty"' },
+  { cat: 'edu', dork: 'site:*.gov* inurl:/security intext:contact intext:reward' },
+  { cat: 'edu', dork: 'site:*.gov* filetype:pdf "vulnerability disclosure policy"' },
+  { cat: 'edu', dork: 'site:*.edu intext:"security.txt" intext:bounty' },
+  { cat: 'edu', dork: 'site:*.ac.uk intext:"responsible disclosure"' },
+  { cat: 'edu', dork: 'site:*.edu.au intext:"vulnerability disclosure"' },
+  { cat: 'edu', dork: 'site:*.gov.uk "responsible disclosure" intext:reward' },
+  { cat: 'edu', dork: 'site:*.mil "vulnerability disclosure program"' },
+  { cat: 'edu', dork: 'site:*.gov inurl:/security.txt intext:bounty' },
+
+  // HALL OF FAME
+  { cat: 'hof', dork: 'inurl:/hall-of-fame intext:security' },
+  { cat: 'hof', dork: 'inurl:/thanks intext:"security researchers"' },
+  { cat: 'hof', dork: 'inurl:/acknowledgements intext:"responsible disclosure"' },
+  { cat: 'hof', dork: 'inurl:/credits intext:"vulnerability"' },
+  { cat: 'hof', dork: 'inurl:/honorable-mention intext:security' },
+  { cat: 'hof', dork: 'intext:"security acknowledgements" inurl:security' },
+  { cat: 'hof', dork: 'intext:"security researchers" intext:"thank you" inurl:security' },
+  { cat: 'hof', dork: 'intext:"we would like to thank" intext:"vulnerability"' },
+  { cat: 'hof', dork: 'intitle:"Security Hall of Fame"' },
+  { cat: 'hof', dork: 'intitle:"Researchers Hall of Fame" security' },
+  { cat: 'hof', dork: 'inurl:/security/thanks' },
+  { cat: 'hof', dork: 'inurl:/security/acknowledgement' },
+  { cat: 'hof', dork: 'inurl:/whitehat/thanks' },
+  { cat: 'hof', dork: 'inurl:/security-hall-of-fame' },
+  { cat: 'hof', dork: 'intitle:"Bug Bounty Hall of Fame"' },
+  { cat: 'hof', dork: 'intext:"security hall of fame" inurl:security' },
+  { cat: 'hof', dork: 'inurl:/thanks.html intext:"vulnerability"' },
+  { cat: 'hof', dork: 'intext:"reported by" inurl:/security/researchers' },
+
+  // GITHUB & CODE REPOS
+  { cat: 'github', dork: 'site:github.com intext:"bug bounty" intext:"security.txt"' },
+  { cat: 'github', dork: 'site:github.com inurl:/security intext:"responsible disclosure"' },
+  { cat: 'github', dork: 'site:github.com "SECURITY.md" intext:bounty' },
+  { cat: 'github', dork: 'site:github.com "hall of fame" intext:"security researchers"' },
+  { cat: 'github', dork: 'site:gitlab.com intext:"responsible disclosure" intext:reward' },
+  { cat: 'github', dork: 'site:github.com intext:"we pay" intext:"security vulnerabilities"' },
+  { cat: 'github', dork: 'site:github.com inurl:/.well-known/security.txt' },
+  { cat: 'github', dork: 'site:raw.githubusercontent.com security.txt intext:bounty' },
+  { cat: 'github', dork: 'site:gist.github.com intext:"bug bounty" intext:"reward"' },
+  { cat: 'github', dork: 'site:github.com intext:"vulnerability disclosure" intext:reward' },
+  { cat: 'github', dork: 'site:github.com "bounty program" intext:reward' },
+  { cat: 'github', dork: 'site:github.com filename:security.txt intext:bounty' },
+  { cat: 'github', dork: 'site:github.com filename:SECURITY.md intext:"responsible disclosure"' },
+  { cat: 'github', dork: 'site:github.com intext:"hackerone" intext:"bug bounty"' },
+  { cat: 'github', dork: 'site:bitbucket.org intext:"responsible disclosure" intext:bounty' },
+
+  // FILETYPE
+  { cat: 'filetype', dork: 'filetype:pdf "responsible disclosure" "reward"' },
+  { cat: 'filetype', dork: 'filetype:pdf "bug bounty program" "eligible"' },
+  { cat: 'filetype', dork: 'filetype:pdf "vulnerability disclosure policy"' },
+  { cat: 'filetype', dork: 'filetype:txt inurl:security intext:"hall of fame"' },
+  { cat: 'filetype', dork: 'filetype:txt inurl:.well-known intext:bounty' },
+  { cat: 'filetype', dork: 'filetype:md inurl:SECURITY intext:bounty' },
+  { cat: 'filetype', dork: 'filetype:md inurl:SECURITY.md intext:"responsible disclosure"' },
+  { cat: 'filetype', dork: 'filetype:json inurl:security intext:bounty' },
+  { cat: 'filetype', dork: 'filetype:yaml inurl:security intext:hackerone' },
+  { cat: 'filetype', dork: 'filetype:yml inurl:.hackerone intext:url' },
+  { cat: 'filetype', dork: 'filetype:xml inurl:security intext:"vulnerability report"' },
+  { cat: 'filetype', dork: 'filetype:pdf site:*.gov "vulnerability disclosure program"' },
+  { cat: 'filetype', dork: 'filetype:pdf site:*.edu "bug bounty" OR "responsible disclosure"' },
+  { cat: 'filetype', dork: 'filetype:txt security reward rewards -"we currently" -"we do not" -"not offer"' },
+  { cat: 'filetype', dork: 'inurl:/security ext:txt "contact"' },
+  { cat: 'filetype', dork: 'filetype:txt inurl:/.well-known/security intext:"Policy:"' },
+  { cat: 'filetype', dork: 'filetype:txt intext:"Expires:" intext:"Contact:" intext:bounty' },
+  { cat: 'filetype', dork: 'filetype:txt intext:"Acknowledgments:" inurl:security' },
+  { cat: 'filetype', dork: 'filetype:json inurl:bounty intext:"scope"' },
+  { cat: 'filetype', dork: 'filetype:pdf "responsible disclosure" site:*.nl' },
+
+  // INTEXT / KEYWORD
+  { cat: 'intext', dork: '"security vulnerability" "report"' },
+  { cat: 'intext', dork: 'intext:"we take security very seriously"' },
+  { cat: 'intext', dork: 'intext:"BugBounty" and intext:"BTC" and intext:"reward"' },
+  { cat: 'intext', dork: 'intext:bounty inurl:/security' },
+  { cat: 'intext', dork: '"cms" bug bounty' },
+  { cat: 'intext', dork: '"If you find a security issue" "reward"' },
+  { cat: 'intext', dork: '"vulnerability disclosure program" AND (bounty OR reward OR swag OR "hall of fame")' },
+  { cat: 'intext', dork: 'intitle:"Bug Bounty" OR intitle:"Vulnerability Disclosure" OR intitle:"Security Rewards"' },
+  { cat: 'intext', dork: '"We value security researchers" OR "We appreciate security reports" AND (reward OR bounty)' },
+  { cat: 'intext', dork: '"If you discover a vulnerability" AND (swag OR "hall of fame" OR monetary)' },
+  { cat: 'intext', dork: 'intext:security report monetary inurl:security' },
+  { cat: 'intext', dork: 'intext:security report reward inurl:report' },
+  { cat: 'intext', dork: '"security.txt" AND ("mailto" OR "contact") AND (bounty OR reward)' },
+  { cat: 'intext', dork: 'buy bitcoins "bug bounty"' },
+  { cat: 'intext', dork: '"security.txt" AND "PGP" AND (bounty OR reward)' },
+  { cat: 'intext', dork: 'site:*.*.* inurl:bug inurl:bounty' },
+  { cat: 'intext', dork: 'site:help.*.* inurl:bounty' },
+  { cat: 'intext', dork: 'site:support.*.* intext:security report reward' },
+  { cat: 'intext', dork: 'site:security.*.* inurl: bounty' },
+  { cat: 'intext', dork: 'site:*/security.txt "bounty"' },
+  { cat: 'intext', dork: '"we pay researchers" intext:vulnerability' },
+  { cat: 'intext', dork: '"security bug bounty" intext:"reward"' },
+  { cat: 'intext', dork: 'intext:"eligible for bounty" inurl:security' },
+  { cat: 'intext', dork: '"This page is dedicated to" intext:security intext:researchers' },
+  { cat: 'intext', dork: 'intext:"found a security bug" intext:"contact us"' },
+  { cat: 'intext', dork: '"security@" intext:"please report" intext:vulnerabilities' },
+  { cat: 'intext', dork: 'intext:"we want to hear from you" inurl:security intext:vulnerability' },
+  { cat: 'intext', dork: '"cyber security" "report a vulnerability" intext:reward' },
+
+  // SCOPE & ELIGIBILITY
+  { cat: 'scope', dork: 'intext:"in scope" intext:"out of scope" inurl:security' },
+  { cat: 'scope', dork: 'intext:"eligible vulnerabilities" inurl:security' },
+  { cat: 'scope', dork: 'intext:"minimum severity" inurl:bug-bounty' },
+  { cat: 'scope', dork: 'intext:"CVSS" intext:"eligible" inurl:security' },
+  { cat: 'scope', dork: 'intext:"critical" intext:"high" intext:"bounty" inurl:security' },
+  { cat: 'scope', dork: 'intext:"P1 P2 P3" intext:"reward" inurl:security' },
+  { cat: 'scope', dork: 'intext:"severity" intext:"payout" inurl:bounty' },
+  { cat: 'scope', dork: 'intext:"qualifying vulnerabilities" inurl:security' },
+  { cat: 'scope', dork: 'intext:"non-qualifying" inurl:security intext:bounty' },
+  { cat: 'scope', dork: 'intext:"safe harbor" inurl:security' },
+  { cat: 'scope', dork: 'intext:"good faith" inurl:responsible-disclosure' },
+  { cat: 'scope', dork: 'intext:"we will not pursue" inurl:security intext:researcher' },
+  { cat: 'scope', dork: 'intext:"reward table" inurl:security' },
+  { cat: 'scope', dork: 'intext:"bounty table" inurl:security' },
+  { cat: 'scope', dork: 'intext:"payout table" inurl:bug-bounty' },
+  { cat: 'scope', dork: 'intext:"scope" intext:"out of scope" intext:"reward" inurl:security' },
+  { cat: 'scope', dork: 'intext:"responsible disclosure" intext:"legal" intext:"won\'t sue"' },
+  { cat: 'scope', dork: 'intext:"no legal action" inurl:security intext:researcher' },
+  { cat: 'scope', dork: 'intext:"reward tiers" inurl:security' },
+  { cat: 'scope', dork: 'intext:"reward structure" inurl:security' },
+
+  // CRYPTO & REWARDS
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"ethereum" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"USDC" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"USDT" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"monero" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"responsible disclosure" intext:"gift card" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"amazon gift" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"swag" intext:"t-shirt" inurl:responsible-disclosure' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"cryptocurrency" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"pay in crypto" inurl:security intext:vulnerability' },
+  { cat: 'crypto', dork: '"responsible disclosure" AND (monetary OR cash OR "gift card" OR crypto OR BTC)' },
+  { cat: 'crypto', dork: 'intext:"bug bounty" intext:"bitcoin" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bounty" intext:"SOL" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"bounty" intext:"DAI" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"pay in BTC" inurl:security' },
+  { cat: 'crypto', dork: 'intext:"reward in crypto" inurl:security intext:vulnerability' },
+  { cat: 'crypto', dork: 'intext:"web3" intext:"bug bounty" intext:"reward"' },
+  { cat: 'crypto', dork: 'intext:"defi" intext:"bug bounty" intext:"reward"' },
+  { cat: 'crypto', dork: 'intext:"smart contract" intext:"bug bounty"' },
+  { cat: 'crypto', dork: 'intext:"immunefi" intext:"bounty"' },
+  { cat: 'crypto', dork: 'site:immunefi.com intext:"bounty"' },
+
+  // STARTUP / SAAS
+  { cat: 'startup', dork: 'intext:"security@" intext:"bounty" site:*.io' },
+  { cat: 'startup', dork: 'intext:"security@" intext:"bounty" site:*.ai' },
+  { cat: 'startup', dork: 'intext:"security@" intext:"bounty" site:*.app' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.io' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.ai' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.dev' },
+  { cat: 'startup', dork: 'intitle:"security" intext:"reward" site:*.io' },
+  { cat: 'startup', dork: '"If you find a bug" intext:"reward" site:*.io' },
+  { cat: 'startup', dork: '"If you find a bug" intext:"reward" site:*.ai' },
+  { cat: 'startup', dork: 'intext:"responsible disclosure" site:*.co' },
+  { cat: 'startup', dork: 'intext:"bug bounty" site:*.xyz inurl:security' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.tech' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.cloud' },
+  { cat: 'startup', dork: 'intext:"bug bounty" site:*.dev' },
+  { cat: 'startup', dork: '"security@" intext:bounty site:*.co' },
+  { cat: 'startup', dork: 'intext:"responsible disclosure" site:*.app' },
+  { cat: 'startup', dork: 'intext:"security" intext:"reward" site:*.network' },
+  { cat: 'startup', dork: 'inurl:/security intext:bounty site:*.finance' },
+  { cat: 'startup', dork: '"bug bounty" intext:"reward" site:*.protocol' },
+
+  // ADVANCED BOOLEAN
+  { cat: 'boolean', dork: '("bug bounty" OR "responsible disclosure") AND ("hall of fame" OR "monetary" OR "swag") AND inurl:security' },
+  { cat: 'boolean', dork: '("vulnerability disclosure" OR "report a vulnerability") AND ("reward" OR "bounty") AND -site:hackerone.com -site:bugcrowd.com' },
+  { cat: 'boolean', dork: 'inurl:security ("we reward" OR "we pay" OR "we offer") ("researchers" OR "hunters")' },
+  { cat: 'boolean', dork: 'intext:("found a vulnerability" OR "found a security issue") AND ("contact us" OR "email us") AND ("reward" OR "bounty")' },
+  { cat: 'boolean', dork: 'inurl:/.well-known/security.txt AND ("Expires" OR "Canonical") AND ("bounty" OR "reward")' },
+  { cat: 'boolean', dork: '("security.txt" OR "security policy") AND ("BTC" OR "ETH" OR "bitcoin" OR "crypto") AND ("reward" OR "bounty")' },
+  { cat: 'boolean', dork: 'intitle:(bug bounty OR responsible disclosure) AND intext:(reward OR swag OR "hall of fame" OR monetary)' },
+  { cat: 'boolean', dork: '(site:*.io OR site:*.ai OR site:*.app) inurl:/security intext:(bounty OR reward)' },
+  { cat: 'boolean', dork: '("security program" OR "vulnerability program") AND ("eligible" OR "reward") AND inurl:security' },
+  { cat: 'boolean', dork: '(inurl:security.txt OR inurl:/.well-known/security) AND (intext:bounty OR intext:reward) -site:hackerone.com' },
+  { cat: 'boolean', dork: '("P1" OR "P2" OR "P3") AND ("bounty" OR "reward") AND inurl:security' },
+  { cat: 'boolean', dork: '(site:*.edu OR site:*.gov) AND ("bug bounty" OR "responsible disclosure") AND (reward OR bounty)' },
+  { cat: 'boolean', dork: 'intext:("we offer" OR "we provide") intext:("reward" OR "compensation") inurl:security' },
+  { cat: 'boolean', dork: '("security researcher" OR "ethical hacker") AND "reward" AND inurl:security' },
+  { cat: 'boolean', dork: '(intitle:"bug bounty" OR intitle:"security rewards") NOT site:hackerone.com NOT site:bugcrowd.com' },
+  { cat: 'boolean', dork: '("XSS" OR "SQL injection" OR "RCE" OR "SSRF") AND "eligible" AND "reward" AND inurl:security' },
+  { cat: 'boolean', dork: '(inurl:bounty OR inurl:bug-bounty) AND (intext:reward OR intext:swag) AND NOT site:hackerone.com' },
+  { cat: 'boolean', dork: '("security contact" OR "security email") AND ("bounty" OR "reward") AND (inurl:security OR inurl:contact)' },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let currentCat = 'all';
+let currentSearch = '';
+let currentEngine = 'google';
+let selectedDorks = new Set();
+
+const CAT_META = {
+  url:        { label: 'URL-Based',       icon: '🔗', chipId: 'chipUrl' },
+  disclosure: { label: 'Responsible Disclosure', icon: '📋', chipId: 'chipDisclosure' },
+  platform:   { label: 'Platform-Specific', icon: '🏛', chipId: 'chipPlatform' },
+  region:     { label: 'Region-Specific', icon: '🌍', chipId: 'chipRegion' },
+  edu:        { label: 'Edu / Government', icon: '🎓', chipId: 'chipEdu' },
+  hof:        { label: 'Hall of Fame',    icon: '🏆', chipId: 'chipHof' },
+  github:     { label: 'GitHub & Repos',  icon: '🐙', chipId: 'chipGithub' },
+  filetype:   { label: 'Filetype',        icon: '📄', chipId: 'chipFiletype' },
+  intext:     { label: 'Intext / Keyword', icon: '🔍', chipId: 'chipIntext' },
+  scope:      { label: 'Scope & Eligibility', icon: '🎯', chipId: 'chipScope' },
+  crypto:     { label: 'Crypto & Rewards', icon: '₿', chipId: 'chipCrypto' },
+  startup:    { label: 'Startup / SaaS',  icon: '🚀', chipId: 'chipStartup' },
+  boolean:    { label: 'Advanced Boolean', icon: '⚡', chipId: 'chipBoolean' },
+};
+
+// ── ENGINE URLs ────────────────────────────────────────────────────────────────
+function getSearchUrl(dork) {
+  const enc = encodeURIComponent(dork);
+  switch (currentEngine) {
+    case 'google': return `https://www.google.com/search?q=${enc}`;
+    case 'bing':   return `https://www.bing.com/search?q=${enc}`;
+    case 'ddg':    return `https://duckduckgo.com/?q=${enc}`;
+    case 'brave':  return `https://search.brave.com/search?q=${enc}`;
+    case 'shodan': return `https://www.shodan.io/search?query=${enc}`;
+    default:       return `https://www.google.com/search?q=${enc}`;
+  }
+}
+
+// ── FILTERING ──────────────────────────────────────────────────────────────────
+function getFiltered() {
+  let data = DORK_DATA;
+  if (currentCat !== 'all') data = data.filter(d => d.cat === currentCat);
+  if (currentSearch.trim()) {
+    const q = currentSearch.toLowerCase();
+    data = data.filter(d => d.dork.toLowerCase().includes(q));
+  }
+  const sort = document.getElementById('sortSelect').value;
+  if (sort === 'alpha') data = [...data].sort((a,b) => a.dork.localeCompare(b.dork));
+  else if (sort === 'length') data = [...data].sort((a,b) => a.dork.length - b.dork.length);
+  else if (sort === 'length-desc') data = [...data].sort((a,b) => b.dork.length - a.dork.length);
+  return data;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────────
+function syntaxHighlight(dork, query) {
+  let d = dork
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // Highlight operators
+  d = d.replace(/\b(inurl|intext|intitle|site|filetype|ext|cache|related|allinurl|allintext|inurl|insite):/g,
+    '<span class="dork-keyword">$1:</span>');
+
+  // Highlight quoted strings
+  d = d.replace(/"([^"]+)"/g, '<span class="dork-string">"$1"</span>');
+
+  // Highlight search query
+  if (query && query.trim()) {
+    const esc = query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re = new RegExp(`(${esc})`, 'gi');
+    d = d.replace(re, '<mark>$1</mark>');
+  }
+
+  return d;
+}
+
+function renderDorks() {
+  const filtered = getFiltered();
+  const container = document.getElementById('dorksContainer');
+  document.getElementById('shownCount').textContent = filtered.length;
+  document.getElementById('filteredCount').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="dork-grid"><div class="no-results">
+      <span class="icon">⊘</span>
+      <h3>No dorks found</h3>
+      <p>Try adjusting your search or filter.</p>
+    </div></div>`;
+    return;
+  }
+
+  // Group by category
+  const groups = {};
+  filtered.forEach(d => {
+    if (!groups[d.cat]) groups[d.cat] = [];
+    groups[d.cat].push(d);
+  });
+
+  let html = '';
+  const cats = currentCat === 'all'
+    ? Object.keys(CAT_META)
+    : [currentCat];
+
+  cats.forEach(cat => {
+    if (!groups[cat]) return;
+    const meta = CAT_META[cat];
+    html += `<div class="cat-section" id="section-${cat}">
+      <div class="cat-section-header">
+        <div class="cat-section-title">
+          <span>${meta.icon}</span>
+          ${meta.label}
+          <span class="cat-badge color-${cat} badge-${cat}">${cat.toUpperCase()}</span>
+        </div>
+        <span class="cat-section-count">${groups[cat].length} dorks</span>
+      </div>
+      <div class="dork-grid">
+        ${groups[cat].map(d => renderCard(d)).join('')}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  updateCounts();
+}
+
+function renderCard(d) {
+  const url = getSearchUrl(d.dork);
+  const checked = selectedDorks.has(d.dork) ? 'checked' : '';
+  const highlighted = syntaxHighlight(d.dork, currentSearch);
+  return `<div class="dork-card" style="--card-color: var(--cat-color, #00ff88)">
+    <input type="checkbox" class="dork-card-check" ${checked} onchange="toggleDork(this, '${escAttr(d.dork)}')" title="Select">
+    <div class="dork-text">${highlighted}</div>
+    <div class="dork-footer">
+      <span class="dork-tag color-${d.cat}">${CAT_META[d.cat].icon} ${d.cat}</span>
+      <div class="dork-actions">
+        <button class="dork-action-btn" onclick="copyDork(this, '${escAttr(d.dork)}')" title="Copy dork">⎘</button>
+        <a class="dork-action-btn google" href="${url}" target="_blank" rel="noopener" title="Search">↗</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function escAttr(s) {
+  return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+// ── COUNTS ─────────────────────────────────────────────────────────────────────
+function updateCounts() {
+  document.getElementById('totalDorks').textContent = DORK_DATA.length;
+
+  const counts = {};
+  DORK_DATA.forEach(d => counts[d.cat] = (counts[d.cat] || 0) + 1);
+
+  document.getElementById('chipAll').textContent = DORK_DATA.length;
+  Object.keys(CAT_META).forEach(cat => {
+    const el = document.getElementById('chip' + cat.charAt(0).toUpperCase() + cat.slice(1));
+    if (el) el.textContent = counts[cat] || 0;
+  });
+
+  // Sidebar
+  const sidebarCats = document.getElementById('sidebarCats');
+  if (sidebarCats) {
+    sidebarCats.innerHTML = Object.entries(CAT_META).map(([cat, meta]) =>
+      `<div class="cat-item ${currentCat === cat ? 'active' : ''}" onclick="filterByCat('${cat}')">
+        <span class="cat-icon">${meta.icon}</span>
+        ${meta.label}
+        <span class="cat-count">${counts[cat] || 0}</span>
+      </div>`
+    ).join('');
+  }
+}
+
+// ── ACTIONS ────────────────────────────────────────────────────────────────────
+function setEngine(btn) {
+  document.querySelectorAll('.engine-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentEngine = btn.dataset.engine;
+  renderDorks();
+}
+
+function filterByChip(btn) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  renderDorks();
+  // Sync sidebar
+  document.querySelectorAll('.cat-item').forEach(item => {
+    item.classList.toggle('active', false);
+  });
+}
+
+function filterByCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.cat === cat));
+  renderDorks();
+}
+
+function copyDork(btn, dork) {
+  navigator.clipboard.writeText(dork).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '⎘';
+    }, 1500);
+    showToast('Dork copied to clipboard!');
+  });
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function toggleDork(checkbox, dork) {
+  if (checkbox.checked) selectedDorks.add(dork);
+  else selectedDorks.delete(dork);
+  updateSelectedUI();
+}
+
+function updateSelectedUI() {
+  const count = selectedDorks.size;
+  const el = document.getElementById('selectedCount');
+  const btn = document.getElementById('batchOpenBtn');
+  if (count > 0) {
+    el.style.display = 'inline';
+    el.textContent = count + ' selected';
+    btn.classList.add('visible');
+  } else {
+    el.style.display = 'none';
+    btn.classList.remove('visible');
+  }
+}
+
+function toggleSelectAll(checkbox) {
+  const filtered = getFiltered();
+  if (checkbox.checked) {
+    filtered.forEach(d => selectedDorks.add(d.dork));
+  } else {
+    filtered.forEach(d => selectedDorks.delete(d.dork));
+  }
+  renderDorks();
+  updateSelectedUI();
+}
+
+function openSelected() {
+  const dorks = [...selectedDorks];
+  if (dorks.length === 0) return;
+  if (dorks.length > 10) {
+    if (!confirm(`Open ${dorks.length} tabs? This might be blocked by your browser.`)) return;
+  }
+  dorks.forEach((dork, i) => {
+    setTimeout(() => window.open(getSearchUrl(dork), '_blank'), i * 200);
+  });
+  showToast(`Opened ${dorks.length} search${dorks.length > 1 ? 'es' : ''}`);
+}
+
+// ── DORK BUILDER ────────────────────────────────────────────────────────────────
+function updateBuilder() {
+  const op = document.getElementById('buildOp').value;
+  const val = document.getElementById('buildVal').value;
+  const mod = document.getElementById('buildMod').value;
+  const out = `${op}${val}${mod ? ' ' + mod : ''}`;
+  document.getElementById('builderOutput').textContent = out || '// Your dork will appear here';
+}
+
+function copyBuilderDork() {
+  const txt = document.getElementById('builderOutput').textContent;
+  if (txt.startsWith('//')) return;
+  navigator.clipboard.writeText(txt).then(() => showToast('Builder dork copied!'));
+}
+
+function openBuilderDork() {
+  const txt = document.getElementById('builderOutput').textContent;
+  if (txt.startsWith('//')) return;
+  window.open(getSearchUrl(txt), '_blank');
+}
+
+['buildOp','buildVal','buildMod'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateBuilder);
+});
+
+// ── EXPORT ──────────────────────────────────────────────────────────────────────
+function download(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportAll(fmt) {
+  if (fmt === 'txt') {
+    const content = Object.entries(CAT_META).map(([cat, meta]) => {
+      const dorks = DORK_DATA.filter(d => d.cat === cat);
+      return `\n── ${meta.label.toUpperCase()} ──\n` + dorks.map(d => d.dork).join('\n');
+    }).join('\n');
+    download('# BugDork - All Dorks\n# https://github.com\n' + content, 'bugdork-all.txt', 'text/plain');
+  } else {
+    download(JSON.stringify(DORK_DATA, null, 2), 'bugdork-all.json', 'application/json');
+  }
+  showToast(`Exported ${DORK_DATA.length} dorks as .${fmt}`);
+}
+
+function exportFiltered(fmt) {
+  const filtered = getFiltered();
+  if (fmt === 'txt') {
+    const content = filtered.map(d => d.dork).join('\n');
+    download('# BugDork - Filtered Export\n# https://github.com\n\n' + content, 'bugdork-filtered.txt', 'text/plain');
+  } else {
+    download(JSON.stringify(filtered, null, 2), 'bugdork-filtered.json', 'application/json');
+  }
+  showToast(`Exported ${filtered.length} dorks as .${fmt}`);
+}
+
+// ── SEARCH ──────────────────────────────────────────────────────────────────────
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearSearch');
+
+searchInput.addEventListener('input', () => {
+  currentSearch = searchInput.value;
+  clearBtn.classList.toggle('visible', currentSearch.length > 0);
+  renderDorks();
+});
+
+clearBtn.addEventListener('click', () => {
+  searchInput.value = '';
+  currentSearch = '';
+  clearBtn.classList.remove('visible');
+  renderDorks();
+  searchInput.focus();
+});
+
+// keyboard shortcut
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
+  if (e.key === 'Escape') {
+    clearBtn.click();
+  }
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderDorks();
+</script>
+</body>
+</html>

