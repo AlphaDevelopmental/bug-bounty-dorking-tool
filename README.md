@@ -12,13 +12,11 @@ A comprehensive tool for bug bounty hunters to generate and use Google dorks for
 ## Files
 
 - `bug-bounty-dork-tool.html` - Main dork generation tool
-- `api_security_lab_platform.html` - Lab platform for learning
-- `week_2_css.html` - CSS module
-- `week_3_javascript.html` - JavaScript module
+- `README.md` - the process
 
 ## Usage
 
-Open any of the HTML files in your web browser to start using the tools.
+Open the HTML file in your web browser to start using the tools.
 
 ## Keywords
 
