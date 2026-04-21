@@ -22,4 +22,4 @@ Open any of the HTML files in your web browser to start using the tools.
 
 ## Keywords
 
-bug bounty, google dorks, vulnerability hunting, security research, dorking, penetration testing, web security
+bug bounty, google dorks, vulnerability hunting, security research, dorking, penetration testing, web security# bug-bounty-dorking-tool
